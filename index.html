@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0e13">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Portföy">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230b0e13'/%3E%3Ctext x='90' y='120' font-size='96' text-anchor='middle' fill='%235b8def' font-family='sans-serif' font-weight='bold'%3E%E2%82%BA%3C/text%3E%3C/svg%3E">
+<title>Portföy</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+  :root{color-scheme:dark;--bg:#0b0e13;--s1:#141922;--s2:#1b212c;--s3:#232b38;--bd:#2b3441;
+    --tx:#e8eef6;--mu:#8d99a8;--dm:#616e7d;--pos:#2ecc71;--posbg:#10301f;--neg:#ff5c5c;--negbg:#33161a;
+    --wr:#f0a92e;--wrbg:#33280d;--ac:#5b8def;--ac2:#8b5cf6}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{max-width:100%;overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--tx);font-size:14px;padding:0 0 24px;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 14px}
+  .hdr{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,#121722,#0f141d);border-bottom:1px solid var(--bd);padding:14px 0 0}
+  .hdr-in{max-width:1120px;margin:0 auto;padding:0 16px}
+  .hdr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .tl{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em}
+  .tv{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:2px 0 3px}
+  .tc{font-size:13.5px;font-weight:600}
+  .rf-btn{display:flex;align-items:center;gap:6px;background:var(--ac);color:#fff;border:0;border-radius:8px;
+    padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap}
+  .rf-btn:hover{background:#4a7ad8}
+  .rf-btn:disabled{background:var(--s3);color:var(--dm);cursor:default}
+  .rf-ic{font-size:14px;line-height:1;display:inline-block}
+  .rf-btn.busy .rf-ic{animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .rf-msg{display:none;margin-top:10px;padding:9px 13px;border-radius:8px;font-size:12px;line-height:1.55}
+  .rf-msg.show{display:block}
+  .rf-msg.ok{background:var(--posbg);color:#96e3b6;border-left:3px solid var(--pos)}
+  .rf-msg.err{background:var(--negbg);color:#ffb3b3;border-left:3px solid var(--neg)}
+  .rf-msg.run{background:#131d2e;color:#b6c8e2;border-left:3px solid var(--ac)}
+  .tx-btn{display:flex;align-items:center;gap:6px;background:var(--s3);color:var(--tx);border:1px solid var(--bd);
+    border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;
+    transition:.15s;white-space:nowrap}
+  .tx-btn:hover{background:#2c3644;border-color:var(--ac)}
+  .ov{display:none;position:fixed;inset:0;background:rgba(4,7,12,.82);z-index:200;
+    align-items:flex-start;justify-content:center;padding:24px 14px;overflow-y:auto}
+  .ov.on{display:flex}
+  .md{background:var(--s1);border:1px solid var(--bd);border-radius:16px;width:100%;max-width:560px;
+    padding:20px 22px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .md-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+  .md-h h2{font-size:16px;margin:0}
+  .md-x{background:none;border:0;color:var(--mu);font-size:22px;cursor:pointer;line-height:1;padding:0 4px}
+  .md-x:hover{color:var(--tx)}
+  .frm{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 6px}
+  .frm .full{grid-column:1/-1}
+  .fld label{display:block;font-size:10.5px;color:var(--mu);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;font-weight:600}
+  .fld input,.fld select{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:8px;
+    padding:9px 11px;color:var(--tx);font-size:13.5px;font-family:inherit}
+  .fld input:focus,.fld select:focus{outline:none;border-color:var(--ac)}
+  .seg{display:flex;gap:0;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+  .seg button{flex:1;background:var(--s2);color:var(--mu);border:0;padding:9px;font-size:13px;font-weight:700;
+    cursor:pointer;font-family:inherit;transition:.15s}
+  .seg button.on.buy{background:var(--pos);color:#05210f}
+  .seg button.on.sell{background:var(--neg);color:#2c0808}
+  .md-act{display:flex;gap:9px;margin-top:16px}
+  .md-act button{flex:1;border:0;border-radius:9px;padding:11px;font-size:13.5px;font-weight:750;
+    cursor:pointer;font-family:inherit;transition:.15s}
+  .bt-save{background:var(--ac);color:#fff}.bt-save:hover{background:#4a7ad8}
+  .bt-cancel{background:var(--s3);color:var(--mu)}.bt-cancel:hover{color:var(--tx)}
+  .tx-row{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid var(--bd);
+    background:var(--s2);border-radius:9px;margin-bottom:7px;font-size:12.5px}
+  .tx-row .del{background:none;border:0;color:var(--dm);cursor:pointer;font-size:16px;padding:0 2px;line-height:1}
+  .tx-row .del:hover{color:var(--neg)}
+  .tag{font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px;letter-spacing:.03em}
+  .tag.b{background:var(--posbg);color:var(--pos)}.tag.s{background:var(--negbg);color:var(--neg)}
+  .warn-inline{font-size:11.5px;color:var(--wr);margin-top:8px;line-height:1.5}
+  .lang{display:flex;border:1px solid var(--bd);border-radius:8px;overflow:hidden;flex-shrink:0}
+  .lang button{background:var(--s1);color:var(--mu);border:0;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+  .lang button.on{background:var(--ac);color:#fff}
+  .tabs{display:flex;gap:2px;margin-top:12px;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:1 1 0;min-width:62px;background:none;border:0;cursor:pointer;padding:9px 6px 11px;font-family:inherit;
+    font-size:11px;font-weight:600;color:var(--dm);border-bottom:2px solid transparent;transition:.15s;
+    display:flex;flex-direction:column;align-items:center;gap:4px;white-space:nowrap}
+  .tab .ic{font-size:16px;line-height:1;opacity:.85}
+  .tab:hover{color:var(--mu)}.tab.on{color:var(--ac);border-bottom-color:var(--ac)}.tab.on .ic{opacity:1}
+  .pw{padding-top:18px}
+  .tp{display:none;animation:f .2s ease}.tp.on{display:block}
+  @keyframes f{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .card{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+  .card h2{font-size:14px;margin:0 0 4px;letter-spacing:-.01em}
+  .card h3{font-size:13px;margin:16px 0 6px}
+  .hint{font-size:11.5px;color:var(--dm);margin:0 0 14px;line-height:1.5}
+  .card p{font-size:13.5px;line-height:1.68;color:#c2ccd8;margin:0 0 11px}
+  .card p b{color:var(--tx);font-weight:650}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:10px;margin-bottom:14px}
+  .kpi{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:12px 14px}
+  .kpi .l{font-size:10.5px;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+  .kpi .v{font-size:18px;font-weight:750;letter-spacing:-.01em}
+  .kpi .s{font-size:11px;margin-top:4px;line-height:1.5}
+  .kpi .s2{font-size:10.5px;color:var(--dm);margin-top:2px;border-top:1px solid var(--bd);padding-top:4px}
+  .pos{color:var(--pos)}.neg{color:var(--neg)}.neu{color:#a9b4c2}.wrn{color:var(--wr)}
+  .cb{position:relative;height:280px}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:820px){.g2{grid-template-columns:1fr}.tv{font-size:25px}}
+  table.t{width:100%;border-collapse:collapse;font-size:12px;table-layout:auto}
+  table.t th{text-align:right;font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.03em;
+    padding:7px 6px;border-bottom:1px solid var(--bd);font-weight:600;line-height:1.25}
+  table.t th:first-child,table.t td:first-child{text-align:left}
+  table.t td{padding:8px 6px;border-bottom:1px solid #1e242e;text-align:right}
+  table.t tbody tr:hover td{background:var(--s2)}
+  table.t tr.tt td{border-top:2px solid var(--bd);border-bottom:0;font-weight:750;background:var(--s2)}
+  .sym{font-weight:700;color:var(--tx)}.sub{font-size:10.5px;color:var(--dm);font-weight:400}
+  .sc{width:100%}
+  @media(max-width:700px){table.t{font-size:11px}table.t th,table.t td{padding:6px 4px}}
+  .rng{margin-bottom:15px}
+  .rh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+  .rb{position:relative;height:8px;background:linear-gradient(90deg,var(--negbg),var(--s3) 50%,var(--posbg));border-radius:5px}
+  .rf{position:absolute;top:0;bottom:0;left:0;background:linear-gradient(90deg,transparent,rgba(91,141,239,.35));border-radius:5px}
+  .rd{position:absolute;top:-3px;width:14px;height:14px;border-radius:50%;background:var(--ac);border:2.5px solid var(--bg);transform:translateX(-7px);box-shadow:0 0 0 1px var(--ac)}
+  .rl{display:flex;justify-content:space-between;font-size:10.5px;color:var(--dm);margin-top:6px}
+  .news{border:1px solid var(--bd);background:var(--s2);border-radius:12px;padding:13px 15px;margin-bottom:11px}
+  .nh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}
+  .nt{font-size:13.5px;font-weight:650;line-height:1.42;color:var(--tx)}
+  .nt a{color:inherit;text-decoration:none}.nt a:hover{color:var(--ac)}
+  .nd{font-size:11px;color:var(--dm);margin-bottom:8px}
+  .news p{font-size:12.5px;color:#b3bdc9;line-height:1.58;margin:0 0 9px}
+  .chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:10.5px;font-weight:750;white-space:nowrap;flex-shrink:0}
+  .chip.up{background:var(--posbg);color:var(--pos)}.chip.dn{background:var(--negbg);color:var(--neg)}
+  .chip.fl{background:var(--s3);color:var(--mu)}
+  .imp{font-size:12px;padding:9px 12px;border-radius:8px;line-height:1.6}
+  .imp.up{background:var(--posbg);color:#96e3b6;border-left:3px solid var(--pos)}
+  .imp.dn{background:var(--negbg);color:#ffb3b3;border-left:3px solid var(--neg)}
+  .imp.fl{background:var(--s3);color:#adb8c4;border-left:3px solid var(--dm)}
+  .tick{display:inline-block;font-size:10.5px;font-weight:800;color:var(--ac);background:#16233d;padding:2px 7px;border-radius:5px;margin-right:6px}
+  .nt{display:flex;flex-wrap:wrap;align-items:center;gap:2px}
+  .nc{border-radius:10px;padding:11px 14px;font-size:12.5px;line-height:1.62;margin-bottom:14px}
+  .nc.i{background:#131d2e;border:1px solid #2c4470;border-left:3px solid var(--ac);color:#b6c8e2}
+  .nc.w{background:var(--wrbg);border:1px solid #5c4715;border-left:3px solid var(--wr);color:#e8cf9a}
+  .nc.d{background:var(--negbg);border:1px solid #5c2020;border-left:3px solid var(--neg);color:#f0bcbc}
+  .nc b{color:#e8f0fa}
+  .fl2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+  @media(max-width:820px){.fl2{grid-template-columns:1fr}}
+  .flg{border-left:3px solid var(--neg);background:var(--negbg);padding:10px 13px;border-radius:8px;font-size:12.5px;color:#dcc0c1;line-height:1.55}
+  .flg.w{border-left-color:var(--wr);background:var(--wrbg);color:#ddcda4}
+  .flg.g{border-left-color:var(--pos);background:var(--posbg);color:#a9dcc0}
+  .flg b{display:block;font-size:12px;margin-bottom:3px;color:var(--tx)}
+  .fg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:820px){.fg{grid-template-columns:1fr}}
+  .stk{border:1px solid var(--bd);background:var(--s1);border-radius:13px;padding:15px 17px;margin-bottom:14px}
+  .sk-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:4px;flex-wrap:wrap}
+  .sk-n{font-size:15px;font-weight:750}
+  .sk-n .sub{display:block;margin-top:2px}
+  .sk-p{text-align:right}
+  .sk-p .px{font-size:19px;font-weight:750}
+  .mets{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 12px}
+  .met{background:var(--s3);border-radius:6px;padding:4px 9px;font-size:10.5px;color:var(--mu)}
+  .met b{color:var(--tx);font-weight:700}
+  .met.up b{color:var(--pos)}.met.dn b{color:var(--neg)}
+  .foot{font-size:11px;color:var(--dm);text-align:center;margin-top:18px;line-height:1.75;padding:0 10px}
+  ul.li{margin:6px 0 0;padding-left:18px;font-size:12.5px;color:#a8b3c0;line-height:1.65}
+  body.tr [data-l=en]{display:none!important}body.en [data-l=tr]{display:none!important}
+</style>
+</head>
+<body class="tr">
+
+<div class="hdr"><div class="hdr-in">
+  <div class="hdr-top">
+    <div>
+      <div class="tl"><span data-l="tr">Toplam portföy değeri</span><span data-l="en">Total portfolio value</span></div>
+      <div class="tv">₺97.509,03</div>
+      <div class="tc pos">+₺435,53 (+%0,45) <span class="sub" data-l="tr">· günlük · 08.08.2026 kapanış</span><span class="sub" data-l="en">· today · 08 Aug 2026 close</span></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:flex-start;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
+      <button class="tx-btn" onclick="openTx()">
+        <span style="font-size:14px;line-height:1">+</span><span data-l="tr">İşlem</span><span data-l="en">Trade</span>
+      </button>
+      <div class="lang"><button id="btr" class="on" onclick="setLang('tr')">TR</button><button id="ben" onclick="setLang('en')">EN</button></div>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab on" onclick="go(0,this)"><span class="ic">◈</span><span data-l="tr">Özet</span><span data-l="en">Overview</span></button>
+    <button class="tab" onclick="go(1,this)"><span class="ic">₺</span><span data-l="tr">Kâr / Zarar</span><span data-l="en">P&amp;L</span></button>
+    <button class="tab" onclick="go(2,this)"><span class="ic">◔</span><span data-l="tr">Grafikler</span><span data-l="en">Charts</span></button>
+    <button class="tab" onclick="go(3,this)"><span class="ic">◉</span><span data-l="tr">Haberler</span><span data-l="en">News</span></button>
+    <button class="tab" onclick="go(4,this)"><span class="ic">◇</span><span data-l="tr">TLY Fonu</span><span data-l="en">TLY Fund</span></button>
+    <button class="tab" onclick="go(5,this)"><span class="ic">⚑</span><span data-l="tr">Analiz</span><span data-l="en">Analysis</span></button>
+    <button class="tab" onclick="go(6,this)"><span class="ic">◎</span><span data-l="tr">Sonraki Adım</span><span data-l="en">Next Step</span></button>
+  </div>
+</div></div>
+
+<!-- ===== İşlem giriş penceresi ===== -->
+<div class="ov" id="txOv" onclick="if(event.target===this)closeTx()">
+ <div class="md">
+  <div class="md-h">
+   <h2><span data-l="tr">İşlem ekle</span><span data-l="en">Add a trade</span></h2>
+   <button class="md-x" onclick="closeTx()">&times;</button>
+  </div>
+  <p class="hint" style="margin-bottom:0">
+   <span data-l="tr">Yaptığın alım veya satışı gir; panel pozisyonlarını, maliyetini ve kâr/zararını anında yeniden hesaplar. İşlemler tarayıcına kaydedilir, sayfayı kapatsan da durur.</span>
+   <span data-l="en">Enter a buy or sell; the panel instantly recalculates your positions, cost basis and P&amp;L. Trades are saved in your browser and persist after closing the page.</span>
+  </p>
+
+  <div class="frm">
+   <div class="fld full">
+    <label><span data-l="tr">İşlem tipi</span><span data-l="en">Type</span></label>
+    <div class="seg">
+     <button id="sgB" class="on buy" onclick="setSide('B')"><span data-l="tr">ALIŞ</span><span data-l="en">BUY</span></button>
+     <button id="sgS" class="sell" onclick="setSide('S')"><span data-l="tr">SATIŞ</span><span data-l="en">SELL</span></button>
+    </div>
+   </div>
+   <div class="fld full">
+    <label><span data-l="tr">Hisse kodu</span><span data-l="en">Ticker</span></label>
+    <input id="txK" list="txList" placeholder="ASELS" autocomplete="off" oninput="this.value=this.value.toUpperCase()">
+    <datalist id="txList"></datalist>
+   </div>
+   <div class="fld">
+    <label><span data-l="tr">Adet</span><span data-l="en">Quantity</span></label>
+    <input id="txQ" type="number" step="any" min="0" placeholder="32">
+   </div>
+   <div class="fld">
+    <label><span data-l="tr">Birim fiyat</span><span data-l="en">Unit price</span></label>
+    <input id="txP" type="number" step="any" min="0" placeholder="353,75">
+   </div>
+   <div class="fld full">
+    <label><span data-l="tr">Tarih</span><span data-l="en">Date</span></label>
+    <input id="txD" type="date">
+   </div>
+  </div>
+  <div id="txErr" class="warn-inline"></div>
+
+  <div class="md-act">
+   <button class="bt-cancel" onclick="closeTx()"><span data-l="tr">Vazgeç</span><span data-l="en">Cancel</span></button>
+   <button class="bt-save" onclick="saveTx()"><span data-l="tr">Kaydet</span><span data-l="en">Save</span></button>
+  </div>
+
+  <div id="txListWrap" style="margin-top:20px">
+   <h3 style="font-size:13px;margin:0 0 4px"><span data-l="tr">Girdiğin işlemler</span><span data-l="en">Your entered trades</span></h3>
+   <p class="hint" style="margin-bottom:10px">
+    <span data-l="tr">Bunlar panelin temel verisine ek olarak uygulanıyor. Kalıcı olması ve analizlere girmesi için aşağıdaki butonla bana bildir.</span>
+    <span data-l="en">These are applied on top of the panel's base data. Use the button below to report them to me so they become permanent and feed the analysis.</span>
+   </p>
+   <div id="txRows"></div>
+   <button class="tx-btn" style="width:100%;justify-content:center;margin-top:8px" onclick="copyTx()">
+    <span data-l="tr">İşlemleri kopyala — Claude'a bildir</span><span data-l="en">Copy trades — report to Claude</span>
+   </button>
+   <div id="txCopyMsg" class="warn-inline"></div>
+  </div>
+ </div>
+</div>
+
+<div class="wrap pw">
+
+<!-- ============ 0 ÖZET ============ -->
+<div class="tp on" id="p0">
+  <div class="nc i">
+    <span data-l="tr"><b>Kaynak:</b> doviz.com (Forinvest) — aracı kurumunla aynı sağlayıcı, fiyatlar birebir tutuyor. TLY verisi fintables.com. BIST verisi 15 dk gecikmeli. Son çekim: 08.08.2026 18:10 kapanış. Panel otomatik yenilenmez; zamanlanmış görev yarım saatte bir günceller.</span>
+    <span data-l="en"><b>Source:</b> doviz.com (Forinvest) — same provider as your broker, prices match exactly. TLY data from fintables.com. BIST data is 15-min delayed. Last pull: 08 Aug 2026, 18:10 close. This panel doesn't auto-refresh; a scheduled task updates it every 30 minutes.</span>
+  </div>
+
+  <div class="kpis" id="kpiTop"></div>
+
+  <div class="g2">
+    <div class="card">
+      <h2><span data-l="tr">Dağılım</span><span data-l="en">Allocation</span></h2>
+      <p class="hint"><span data-l="tr">TLY tek başına portföyün %36'sı.</span><span data-l="en">TLY alone is 36% of the portfolio.</span></p>
+      <div class="cb"><canvas id="cAlloc"></canvas></div>
+    </div>
+    <div class="card">
+      <h2><span data-l="tr">Günlük değişim</span><span data-l="en">Today's change</span></h2>
+      <p class="hint"><span data-l="tr">Pozisyon bazında yüzde hareket.</span><span data-l="en">Percentage move per position.</span></p>
+      <div class="cb"><canvas id="cDay"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">Pozisyonlar</span><span data-l="en">Holdings</span></h2>
+    <div class="sc"><table class="t" id="tHold"></table></div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">Pozisyon faktör sinyali</span><span data-l="en">Position factor signal</span></h2>
+    <div class="nc w" style="margin-bottom:14px">
+      <span data-l="tr"><b>Bu bir yatırım tavsiyesi değil, mekanik bir faktör sayımıdır.</b> Her pozisyon 5 objektif faktörde değerlendirilir (değerleme, momentum, 52 haftalık konum, haber akışı, uzun vade trendi) ve her faktör gerçek veriye göre olumlu / nötr / olumsuz sayılır. Yüzdeler bu sayımın oranıdır — <b>fiyat tahmini değildir</b>. Kendi kafamdan "al %20 sat %10" gibi oran üretmedim; her yüzdenin arkasında aşağıda görebileceğin 5 somut faktör var. Analist konsensüs verisi (kaç kurum al/tut/sat diyor) ücretsiz kaynaklarda bulunamadı; bulunabilseydi bu tablo onunla desteklenirdi.</span>
+      <span data-l="en"><b>This is not investment advice; it is a mechanical factor count.</b> Each position is assessed on 5 objective factors (valuation, momentum, 52-week position, news flow, long-term trend), and each factor is counted positive / neutral / negative based on real data. The percentages are the ratio of that count — <b>not a price forecast</b>. I did not invent numbers like "buy 20%, sell 10%"; behind every percentage are the 5 concrete factors you can inspect below. Formal analyst consensus (how many houses rate buy/hold/sell) was not obtainable from free sources; if it were, this table would be backed by it.</span>
+    </div>
+    <div id="signals"></div>
+  </div>
+</div>
+
+<!-- ============ 1 KÂR / ZARAR ============ -->
+<div class="tp" id="p1">
+  <div class="nc i">
+    <span data-l="tr"><b>Gerçek alım tarihlerinle hesaplandı.</b> İşlem geçmişinden 27 Şubat – 30 Temmuz arası tüm alımlar çıkarıldı, doviz.com'dan 122 günlük fiyat serisi çekildi ve portföy değeri her gün için fiilen elde olan pozisyonlarla yeniden hesaplandı.</span>
+    <span data-l="en"><b>Computed from your actual purchase dates.</b> All purchases between 27 Feb and 30 Jul were extracted from your transaction history, 122 days of price data pulled from doviz.com, and portfolio value recomputed each day using the positions you genuinely held.</span>
+  </div>
+
+  <div class="kpis" id="kpiPL"></div>
+
+  <div class="card">
+    <h2><span data-l="tr">Portföy değeri ve yatırılan sermaye</span><span data-l="en">Portfolio value vs. capital invested</span></h2>
+    <p class="hint"><span data-l="tr">Turuncu çizgi o tarihe kadar yatırdığın toplam para. Basamaklar yeni alımlar. Mavi çizgi turuncunun üstündeyse kârdasın.</span><span data-l="en">Orange is total money invested to date. Steps are new purchases. Blue above orange means profit.</span></p>
+    <div class="cb" style="height:300px"><canvas id="cHist"></canvas></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <h2><span data-l="tr">Pozisyon bazında K/Z</span><span data-l="en">P&amp;L by position</span></h2>
+      <p class="hint"><span data-l="tr">Alış maliyetinden bugüne, TL cinsinden.</span><span data-l="en">From purchase cost to today, in TRY.</span></p>
+      <div class="cb" style="height:250px"><canvas id="cPnl"></canvas></div>
+    </div>
+    <div class="card">
+      <h2><span data-l="tr">Günlük K/Z — son 30 işlem günü</span><span data-l="en">Daily P&amp;L — last 30 sessions</span></h2>
+      <p class="hint"><span data-l="tr">Yeni para girişleri arındırıldı; sadece piyasa hareketini gösterir.</span><span data-l="en">New cash inflows stripped out; shows market movement only.</span></p>
+      <div class="cb" style="height:250px"><canvas id="cD30"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">Toplam kâr / zarar — maliyete göre</span><span data-l="en">Total P&amp;L versus cost</span></h2>
+    <p class="hint"><span data-l="tr">ABD hisseleri dolar cinsinden; alış anındaki kur bilinmediği için TL'ye çevirmek yanıltıcı olurdu.</span><span data-l="en">US stocks in USD; converting to TRY would mislead since the purchase-date FX rate is unknown.</span></p>
+    <div class="sc"><table class="t" id="tTotal"></table></div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">Bu seriden çıkan sonuç</span><span data-l="en">What this series shows</span></h2>
+    <div data-l="tr">
+      <p><b>ASELS iyi bir işlemdi, sonrası değil.</b> 27 Şubat'ta ₺309'dan girdin, mayıs başında ₺434'e kadar çıktı — o dönemde elinde sadece ASELS ve altın vardı ve %31,8 kârdaydın. Bugün +%12,25 ile portföyünün tek anlamlı kazananı.</p>
+      <p><b>Asıl kırılma 6 Temmuz.</b> O gün yatırdığın sermayeyi ₺21.930'dan ₺41.930'a çıkardın — tek günde iki katına. THYAO'yu ₺348'den aldın; doviz.com serisine göre THYAO 7 Temmuz'da ₺348,25 ile son üç ayın en yüksek kapanışını yapmıştı. Yani neredeyse tam tepeden girmişsin. Bugün ₺306,25 ve bu tek alım şu anki zararının tamamından fazlasını açıklıyor: -₺1.336.</p>
+      <p><b>Sermayenin %54,4'ü beş haftalık.</b> ₺48.095'in ₺26.165'i 6 Temmuz ve sonrasında yatırıldı. Beş haftada -%2,53 dramatik değil, normal piyasa dalgalanması. Asıl mesele performans değil <b>zamanlama yoğunluğu</b>: sermayenin yarısını birkaç güne sıkıştırmak, sonucu tek bir haftanın fiyatlarına bağlamak demek. Aynı parayı haftalara yaymak (kademeli alım) bu riski azaltırdı.</p>
+      <p><b>Altın portföyün çapası.</b> Ekim 2025'ten beri tuttuğun 40 adet ve 6 Temmuz'da eklediğin 106 adet birlikte +%1,00'de. Aynı gün alınan THYAO %12 düşerken altın artıda kalmış. Portföyünde amacına uygun çalışan tek pozisyon bu.</p>
+      <p><b>En kötü gün 3 Mart.</b> Portföy tek günde ₺1.689 kaybetmiş — o gün elinde sadece ASELS ve altın vardı ve ikisi birden düşmüştü. En iyi gün ise 30 Temmuz, ancak o gün MASFN alımı yapıldığı için sermaye girişi arındırılmış haliyle bakmak gerekir.</p>
+    </div>
+    <div data-l="en">
+      <p><b>ASELS was a good trade; what followed wasn't.</b> You entered at ₺309 on 27 February and it ran to ₺434 by early May — you held only ASELS and gold then, and were up 31.8%. Today it's +12.25%, your only meaningful winner.</p>
+      <p><b>The turning point was 6 July.</b> That day you took invested capital from ₺21,930 to ₺41,930 — doubling it in one session. You bought THYAO at ₺348; per doviz.com's series, THYAO closed at ₺348.25 on 7 July, its highest close in three months. You bought almost exactly at the top. It's ₺306.25 today, and that single purchase accounts for more than your entire current loss: -₺1,336.</p>
+      <p><b>54.4% of your capital is five weeks old.</b> Of ₺48,095, some ₺26,165 went in on or after 6 July. Down 2.53% over five weeks isn't dramatic — it's normal market noise. The issue isn't performance but <b>timing concentration</b>: compressing half your capital into a few days ties the outcome to one week's prices. Spreading it over weeks would have reduced that.</p>
+      <p><b>Gold is the anchor.</b> The 40 units held since October 2025 plus the 106 added on 6 July are together +1.00%. While THYAO bought the same day fell 12%, gold stayed positive — the one position doing its job.</p>
+      <p><b>Worst day was 3 March.</b> The portfolio lost ₺1,689 in one session; you held only ASELS and gold then and both fell together. The best day was 30 July, but that's when MASFN was purchased, so it should be read with cash inflow stripped out.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">İşlem geçmişinden çıkan bulgular</span><span data-l="en">Findings from your transaction history</span></h2>
+    <div class="fl2" style="grid-template-columns:1fr">
+      <div class="flg w"><b><span data-l="tr">TLY emri hâlâ "Bekliyor" görünüyor</span><span data-l="en">The TLY order still shows "Pending"</span></b>
+        <span data-l="tr">7 Ağustos 11:12'de verdiğin ₺35.120,71'lik fon alım emri gerçekleşmemiş görünüyor. TLY'nin alış valörü 1 gün, yani normalde ertesi iş günü valörlenir. Bu tutar portföyünün %36'sı — hesabına geçip geçmediğini mutlaka teyit et.</span>
+        <span data-l="en">The ₺35,120.71 fund order placed 7 August at 11:12 appears not to have executed. TLY settles at T+1 for purchases, so it should normally clear the next business day. That's 36% of your portfolio — confirm it actually landed.</span></div>
+      <div class="flg"><b><span data-l="tr">METEN: iptal olan satış tam tepedeydi</span><span data-l="en">METEN: the cancelled sell was right at the top</span></b>
+        <span data-l="tr">30 Temmuz'da 95 adet METEN'i ₺24,20'den satma emrin iptal edilmiş. Fiyat serisine göre ₺24,20, hissenin halka arzdan sonraki en yüksek kapanışıydı (29 Temmuz). Bugün ₺19,52 — emir geçseydi yaklaşık ₺445 fazla elde edecektin. Neden iptal olduğunu öğren: bakiye, fiyat limiti veya emir süresi olabilir.</span>
+        <span data-l="en">Your 30 July order to sell 95 METEN at ₺24.20 was cancelled. Per the price series, ₺24.20 was the highest close after listing (29 July). It's ₺19.52 today — the order would have netted about ₺445 more. Find out why it was cancelled: balance, price limit, or order duration.</span></div>
+      <div class="flg"><b><span data-l="tr">ABOS: iki çıkış denemesi de tutmadı</span><span data-l="en">ABOS: two exit attempts both failed</span></b>
+        <span data-l="tr">16 Mart'ta $4,77'den verdiğin satış iptal edildi, 17 Mart'ta $5,20'den verdiğinin süresi doldu. Hisse bugün $2,36. Mart ayında çıkma niyetin vardı ama emirler gerçekleşmedi ve pozisyon %51 daha düştü. Limit emirlerinde süre ayarını (günlük mü, iptale kadar mı) kontrol etmek bunu önler.</span>
+        <span data-l="en">Your 16 March sell at $4.77 was cancelled; your 17 March sell at $5.20 expired. The stock is $2.36 today. You meant to exit in March, the orders didn't fill, and the position fell another 51%. Checking limit-order duration (day vs. good-till-cancelled) prevents this.</span></div>
+      <div class="flg w"><b><span data-l="tr">ALTIN.S1'de çok aktif alım-satım</span><span data-l="en">Very active trading in ALTIN.S1</span></b>
+        <span data-l="tr">Geçmişte çok sayıda al-sat var: 480+51+10 adet alım, ardından 542 adet satış, sonra tekrar alımlar. Altını uzun vadeli koruma varlığı olarak tutmakla kısa vadeli işlem yapmak farklı stratejiler. Hangisini yaptığını netleştirmek, her turda ödediğin komisyonu da hesaba katmayı gerektirir.</span>
+        <span data-l="en">Your history shows heavy round-tripping: buys of 480+51+10 units, a 542-unit sale, then buying again. Holding gold as a long-term hedge and trading it short-term are different strategies. Clarifying which you're doing also means accounting for commission on every round trip.</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ 2 GRAFİKLER ============ -->
+<div class="tp" id="p2">
+  <div class="nc i">
+    <span data-l="tr"><b>Her pozisyon için 6 aylık gerçek günlük kapanış serisi</b> doviz.com'dan çekildi (09.02 – 07.08.2026, 122 işlem günü). MASFN ve METEN yeni halka arz olduğu için sırasıyla 7 ve 9 günlük veriye sahip. Kesikli çizgi senin ortalama alış maliyetin — çizgi bunun üstündeyse o pozisyonda kârdasın.</span>
+    <span data-l="en"><b>Six months of real daily closes for every position</b> pulled from doviz.com (09 Feb – 07 Aug 2026, 122 sessions). MASFN and METEN are recent IPOs with only 7 and 9 days of data. The dashed line is your average cost — above it means that position is in profit.</span>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">52 haftalık aralıkta konum — tüm pozisyonlar</span><span data-l="en">Position within 52-week range — all holdings</span></h2>
+    <p class="hint"><span data-l="tr">Mavi nokta bugünkü fiyat. Sola yakın = 52 haftanın dibine yakın, sağa yakın = zirveye yakın.</span><span data-l="en">Blue dot is today's price. Left = near the 52-week low, right = near the high.</span></p>
+    <div id="ranges"></div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">Momentum karşılaştırması</span><span data-l="en">Momentum comparison</span></h2>
+    <p class="hint"><span data-l="tr">Haftalık, aylık ve yıllık değişim yan yana. MASFN ve METEN'de aylık/yıllık veri yok (yeni halka arz).</span><span data-l="en">Weekly, monthly and yearly change side by side. No monthly/yearly data for MASFN and METEN (recent IPOs).</span></p>
+    <div class="cb" style="height:300px"><canvas id="cMom"></canvas></div>
+  </div>
+
+  <div id="stocks"></div>
+
+  <div class="card">
+    <h2><span data-l="tr">Grafiklerin bütününden çıkan okuma</span><span data-l="en">Reading across all the charts</span></h2>
+    <div data-l="tr">
+      <p><b>Portföyün iki uçta duran iki grubu var.</b> Bir tarafta ASELS: 52 haftanın %66'sında, dipten +%112, yıllık +%97,88. Diğer tarafta FROTO (%5,5) ve PGSUS (%4,0): ikisi de 52 haftanın neredeyse tam dibinde, zirvelerinden sırasıyla %40 ve %44 aşağıda. Aynı portföyde hem güçlü bir yükseliş trendi hem de iki derin düşüş trendi taşıyorsun. Bu kendi başına yanlış değil — ama bunun bilinçli bir tercih mi yoksa tesadüf mü olduğunu netleştirmek gerekir.</p>
+      <p><b>Değerleme dağılımı çok geniş.</b> ASELS F/K 39,11 ve PD/DD 5,26 ile pahalı; THYAO F/K 3,77 ve PD/DD 0,41 ile defter değerinin yarısından ucuz; FROTO 8,25 / 1,53; PGSUS 8,90 / 0,66. Yani portföyün en büyük hissesi en pahalı olanı, en ucuz üçü ise en çok düşenler. Bu klasik bir örüntü: piyasa kazananı ödüllendirip kaybedeni cezalandırıyor. Buradaki soru şu — THYAO ve PGSUS gerçekten ucuz mu, yoksa piyasa bir sorunu fiyatlıyor mu? Haberler sekmesindeki HSBC notları bu sorunun ikinci yarısını destekliyor.</p>
+      <p><b>Zamanlamanın maliyeti grafiklerde net görünüyor.</b> THYAO'yu 6 Temmuz'da aldın; grafikte o nokta üç aylık zirvenin hemen dibinde. FROTO'yu 9 Haziran'da ₺87,80'den aldın; grafiğe bakınca hisse şubattan beri kesintisiz aşağı geliyor ve sen düşen bir bıçağın ortasına girmişsin. Buna karşılık ALTIN.S1'i 6 Temmuz'da ₺71,70'ten aldın ve grafikte o nokta yerel bir dip bölgesi — aynı gün verilen iki karardan biri iyi, biri kötü zamanlanmış.</p>
+      <p><b>Altının kendi hikâyesi ayrı.</b> ALTIN.S1 şubatta ₺93,86'ya kadar çıkmış, temmuz ortasında ₺66,17'ye inmiş, şimdi ₺72,80'e toparlamış. Son bir haftada +%7,00 ile portföyünün en hızlı yükselen kalemi. 52 haftalık zirvesi ₺116,65 olarak görünüyor; bu, mevcut fiyatın %37,6 üstünde. Altın portföyünde koruma görevi görüyor ama kendisi de oldukça oynak — "güvenli liman" ile "sabit fiyat" aynı şey değil.</p>
+      <p><b>Yeni halka arzlar henüz okunamaz.</b> MASFN 7, METEN 9 işlem günlük. METEN halka arzdan sonra ₺22'den ₺24,20'ye çıkıp ₺17,65'e kadar inmiş, şimdi ₺19,52 — dokuz günde %27'lik bir bant. Bu kadar kısa ve oynak veriyle trend, destek-direnç veya teknik gösterge okumak mümkün değil. Bunlar için birkaç ay beklemek gerekiyor.</p>
+    </div>
+    <div data-l="en">
+      <p><b>Your portfolio holds two opposite groups.</b> On one side ASELS: at 66% of its 52-week range, +112% off the low, +97.88% over the year. On the other, FROTO (5.5%) and PGSUS (4.0%): both sitting almost exactly at their 52-week lows, 40% and 44% below their highs. You're carrying one strong uptrend and two deep downtrends in the same portfolio. That isn't wrong in itself — but it's worth knowing whether it was a deliberate choice or an accident.</p>
+      <p><b>Valuation dispersion is very wide.</b> ASELS is expensive at P/E 39.11 and P/B 5.26; THYAO trades below half of book at P/E 3.77 and P/B 0.41; FROTO 8.25 / 1.53; PGSUS 8.90 / 0.66. So your largest stock is the most expensive one, and the three cheapest are the ones that have fallen most. That's the classic pattern of a market rewarding the winner and punishing the losers. The question is whether THYAO and PGSUS are genuinely cheap or the market is pricing in a problem — and the HSBC notes in the News tab support the second half of that question.</p>
+      <p><b>The cost of timing is visible in the charts.</b> You bought THYAO on 6 July, right below its three-month peak. You bought FROTO on 9 June at ₺87.80, when the chart shows it had been falling continuously since February — you stepped into a falling knife. By contrast you bought ALTIN.S1 on 6 July at ₺71.70, and that point sits in a local trough. Two decisions made the same day, one well timed, one badly.</p>
+      <p><b>Gold has its own story.</b> ALTIN.S1 reached ₺93.86 in February, fell to ₺66.17 in mid-July, and has recovered to ₺72.80. It's your fastest riser over the past week at +7.00%. Its 52-week high shows as ₺116.65, which is 37.6% above the current price. Gold plays a protective role here, but it's volatile in its own right — "safe haven" and "stable price" are not the same thing.</p>
+      <p><b>The new listings can't be read yet.</b> MASFN has 7 sessions, METEN 9. METEN went from ₺22 at listing to ₺24.20, down to ₺17.65, now ₺19.52 — a 27% band in nine days. Trends, support/resistance and technical indicators are meaningless on data this short and volatile. These need a few months.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 3 HABERLER ============ -->
+<div class="tp" id="p3">
+  <div class="nc w">
+    <span data-l="tr"><b>Etki değerlendirmesi yorumdur, tahmin garantisi değildir.</b> Aşağıdaki yukarı/aşağı işaretleri haberin içeriğine dayalı kendi okumamdır. Piyasa çoğu zaman haberi zaten fiyatlamış olur. Bu bir al/sat tavsiyesi değildir. Haber bulunamayan pozisyonlar için uydurma içerik üretilmemiştir — o pozisyonlar aşağıda ayrıca belirtilmiştir.</span>
+    <span data-l="en"><b>Impact assessment is interpretation, not a guaranteed forecast.</b> The up/down markers below are my own reading of each item. Markets often price news in already. This is not buy/sell advice. No content was invented for positions with no news — those are listed separately below.</span>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">ASELSAN — güçlü haber akışı, zayıf fiyat tepkisi</span><span data-l="en">ASELSAN — strong news flow, weak price reaction</span></h2>
+    <div class="news">
+      <div class="nh"><div class="nt"><span class="tick">ASELS</span><a href="https://haber.doviz.com/borsa-haberleri/aselsan-mali-tablolari-aciklandi-kar-ve-hasilatta-guclu-performans/909020" target="_blank"><span data-l="tr">Mali tablolar açıklandı: kâr ve hasılatta güçlü performans</span><span data-l="en">Financials released: strong profit and revenue performance</span></a></div><span class="chip up">▲ <span data-l="tr">YUKARI</span><span data-l="en">UP</span></span></div>
+      <div class="nd">04.08.2026</div>
+      <p><span data-l="tr">2026 ilk yarısında net kâr yıllık bazda %71 arttı, toplam kâr 14,44 milyar TL'ye ulaştı. Özkaynak büyümesi çeyreklik bazda da sürdü.</span><span data-l="en">H1 2026 net profit rose 71% year-on-year to ₺14.44 billion. Equity growth continued quarterly as well.</span></p>
+      <div class="imp up"><span data-l="tr"><b>Etki:</b> Temel olarak güçlü. %71 kâr artışı F/K'yı aşağı çeker, yani hisseyi ucuzlatır. Normal şartlarda yukarı yönlü. Ancak hisse bilançodan sonraki dört işlem gününde ₺363'ten ₺353,75'e geriledi. Bu, beklentinin zaten yüksek olduğuna ya da "haberi al, gerçeği sat" davranışına işaret ediyor. F/K'nın hâlâ 39,11 olması, iyi haberin fiyata çoktan girmiş olabileceğini destekliyor.</span><span data-l="en"><b>Impact:</b> Fundamentally strong. A 71% profit rise pulls the P/E down, making the stock cheaper. Normally upward. But the stock fell from ₺363 to ₺353.75 in the four sessions after the release — suggesting expectations were already high, or classic "buy the rumour, sell the news". With the P/E still at 39.11, the good news may well be priced in already.</span></div>
+    </div>
+    <div class="news">
+      <div class="nh"><div class="nt"><span class="tick">ASELS</span><a href="https://haber.doviz.com/borsa-haberleri/aselsan-dan-1-47-milyar-euroluk-hava-savunma-sozlesmesi/897488" target="_blank"><span data-l="tr">1,47 milyar euroluk hava savunma sözleşmesi</span><span data-l="en">€1.47 billion air defence contract</span></a></div><span class="chip up">▲ <span data-l="tr">YUKARI</span><span data-l="en">UP</span></span></div>
+      <div class="nd">10.07.2026</div>
+      <div class="imp up"><span data-l="tr"><b>Etki:</b> Bakiye siparişe çok büyük bir ekleme. Savunma şirketlerinde backlog gelecek yılların cirosunu belirlediği için sözleşme haberleri kalıcı etkilidir. Nisan–Temmuz arasında toplam ~1,7 milyar dolar artı 1,47 milyar euro sözleşme imzalanmış — üç ayda olağanüstü bir sipariş akışı. Yıllık +%97,88'lik yükselişin temel gerekçesi büyük ölçüde bu.</span><span data-l="en"><b>Impact:</b> A very large addition to the order backlog. For defence firms, backlog determines future revenue, so contract news has lasting effect. Roughly $1.7bn plus €1.47bn signed between April and July — an extraordinary three-month order flow, and the main justification for the +97.88% yearly gain.</span></div>
+    </div>
+    <div class="news">
+      <div class="nh"><div class="nt"><span class="tick">ASELS</span><span data-l="tr">Nisan–Haziran sözleşme serisi: 845 M$ + 469 M$ + 271,5 M$ + 125,1 M$ ihracat</span><span data-l="en">April–June contract series: $845M + $469M + $271.5M + $125.1M export</span></div><span class="chip up">▲ <span data-l="tr">YUKARI</span><span data-l="en">UP</span></span></div>
+      <div class="nd">30.04 – 04.06.2026</div>
+      <div class="imp up"><span data-l="tr"><b>Etki:</b> İhracat sözleşmesi özellikle değerli çünkü döviz cinsi gelir demek — TL'deki değer kaybına karşı doğal koruma sağlar. Portföyünün neredeyse tamamı TL cinsi olduğu için ASELS'in bu döviz geliri, farkında olmadığın bir kur koruması sağlıyor. Aynı şey FROTO'nun Avrupa ihracatı için de geçerli.</span><span data-l="en"><b>Impact:</b> Export contracts matter especially because they mean FX-denominated revenue — a natural hedge against TRY depreciation. Since nearly all your portfolio is TRY-denominated, ASELS's FX revenue gives you currency protection you may not have realised you had. The same applies to FROTO's European exports.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">FORD OTOSAN — iyi bilanço, kötü pazar</span><span data-l="en">FORD OTOSAN — good results, bad market</span></h2>
+    <div class="news">
+      <div class="nh"><div class="nt"><span class="tick">FROTO</span><a href="https://haber.doviz.com/yerel-ve-sektorel-haberleri/ford-otosan-2026-ikinci-ceyrek-kari-beklentileri-asti/909081" target="_blank"><span data-l="tr">2026 ikinci çeyrek kârı beklentileri aştı</span><span data-l="en">Q2 2026 profit beat expectations</span></a></div><span class="chip up">▲ <span data-l="tr">YUKARI</span><span data-l="en">UP</span></span></div>
+      <div class="nd">04.08.2026</div>
+      <p><span data-l="tr">Şirket, satış gelirlerinde yıllık bazda gerileme yaşanmasına rağmen net dönem kârında piyasa beklentilerini aşan bir performans gösterdi.</span><span data-l="en">The company beat market expectations on net profit despite a year-on-year decline in sales revenue.</span></p>
+      <div class="imp up"><span data-l="tr"><b>Etki:</b> Kâr tarafı olumlu ama <b>ciro düşerken kâr artması</b> genelde maliyet kontrolünden veya tek seferlik kalemlerden gelir; sürdürülebilirliği ciro büyümesi kadar güçlü değildir. Yine de F/K 8,25 seviyesinde bir hisse için beklenti aşımı yukarı yönlüdür. Hisse haberden sonra ₺78,60'tan ₺78,10'a gelmiş — piyasa tepkisiz kalmış, çünkü aşağıdaki iki haber ağır basıyor.</span><span data-l="en"><b>Impact:</b> Positive on profit, but <b>profit rising while revenue falls</b> usually comes from cost control or one-off items, and is less durable than growth-driven profit. Still, for a stock at P/E 8.25, an earnings beat is upward. The stock went from ₺78.60 to ₺78.10 after the release — the market shrugged, because the two items below outweigh it.</span></div>
+    </div>
+    <div class="news">
+      <div class="nh"><div class="nt"><span class="tick">FROTO</span><a href="https://haber.doviz.com/gundem-haberleri/otomotiv-pazarinda-temmuzda-sert-daralma-satislar-yuzde-25-geriledi/908607" target="_blank"><span data-l="tr">Otomotiv pazarında temmuzda sert daralma: satışlar %25 geriledi</span><span data-l="en">Sharp July contraction in autos: sales down 25%</span></a></div><span class="chip dn">▼ <span data-l="tr">AŞAĞI</span><span data-l="en">DOWN</span></span></div>
+      <div class="nd">Temmuz 2026</div>
+      <p><span data-l="tr">Otomobil ve hafif ticari araç toplam pazarı geçen yılın aynı ayına göre %25 gerileyerek 80.786 adede indi.</span><span data-l="en">The combined car and light commercial vehicle market fell 25% year-on-year to 80,786 units.</span></p>
+      <div class="imp dn"><span data-l="tr"><b>Etki:</b> Bu, ikinci çeyrek bilançosundan <b>sonraki</b> döneme ait bir veri; yani iyi bilanço geçmişi, %25'lik daralma ise geleceği anlatıyor. Otomotiv sabit maliyeti yüksek bir sektördür: hacim düştüğünde birim başına maliyet artar ve marj hızla erir. FROTO'nun 52 haftalık dibe bu kadar yakın olmasının (aralığın %5,5'i) ana sebeplerinden biri bu. Yurt içi pazar daralırken şirketin Avrupa ihracatı kısmi tampon sağlıyor.</span><span data-l="en"><b>Impact:</b> This data covers the period <b>after</b> the Q2 results — so the good results describe the past while the 25% contraction describes the future. Autos is a high-fixed-cost industry: when volume drops, per-unit cost rises and margins erode fast. This is a main reason FROTO sits so close to its 52-week low (5.5% of the range). The company's European exports provide a partial buffer against the domestic contraction.</span></div>
+    </div>
+    <div class="news">
+      <div class="nh"><div class="nt"><span class="tick">FROTO</span><span data-l="tr">HSBC otomotiv hedeflerini düşürdü: Ford Otosan "Al"dan "Tut"a indirildi</span><span data-l="en">HSBC cut auto targets: Ford Otosan downgraded from Buy to Hold</span></div><span class="chip dn">▼ <span data-l="tr">AŞAĞI</span><span data-l="en">DOWN</span></span></div>
+      <div class="nd">2026</div>
+      <div class="imp dn"><span data-l="tr"><b>Etki:</b> Tavsiye indirimi genelde kurumsal ve yabancı yatırımcı akışını doğrudan etkiler. Önemli bir örüntü var: <b>aynı kurum (HSBC) hem havacılıkta hem otomotivde negatif</b>. Yani portföyünün THYAO, PGSUS ve FROTO ayakları — toplam ₺19.317, hisse tarafının %41'i — aynı analiz kurumunun olumsuz görüşü altında. Bu, çeşitlendirme sandığın şeyin aslında ortak bir makro tez etrafında toplanmış olabileceğini gösteriyor.</span><span data-l="en"><b>Impact:</b> A downgrade typically drives institutional and foreign flows directly. There's a notable pattern here: <b>the same house (HSBC) is negative on both aviation and autos</b>. So the THYAO, PGSUS and FROTO legs of your portfolio — ₺19,317 combined, 41% of the equity side — all sit under one research house's negative view. What looks like diversification may actually be clustered around a shared macro thesis.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">HAVACILIK — THYAO ve PGSUS</span><span data-l="en">AVIATION — THYAO and PGSUS</span></h2>
+    <div class="news">
+      <div class="nh"><div class="nt"><span class="tick">THYAO</span><a href="https://haber.doviz.com/borsa-haberleri/turk-hava-yollari-ucus-agini-358-noktaya-cikardi/910469" target="_blank"><span data-l="tr">Uçuş ağını 358 noktaya çıkardı, temmuzda 9,5 milyon yolcu</span><span data-l="en">Network expanded to 358 destinations, 9.5m passengers in July</span></a></div><span class="chip up">▲ <span data-l="tr">YUKARI</span><span data-l="en">UP</span></span></div>
+      <div class="nd">07.08.2026</div>
+      <p><span data-l="tr">Arz edilen koltuk kapasitesi ve doluluk oranları geçen yılın aynı dönemine göre iyileşti.</span><span data-l="en">Available seat capacity and load factors improved versus the same period last year.</span></p>
+      <div class="imp up"><span data-l="tr"><b>Etki:</b> Operasyonel olarak olumlu. Doluluk oranı havayollarında en kritik metriktir çünkü maliyetlerin büyük kısmı sabittir — uçak zaten kalkacaksa her ek yolcu neredeyse tamamen kâra yazar. Ancak haber 7 Ağustos'ta çıktı ve hisse 8 Ağustos'ta %1,61 düştü. Piyasa bu iyi trafik verisini şu an satın almıyor; aşağıdaki HSBC notu bunun sebebini açıklıyor olabilir.</span><span data-l="en"><b>Impact:</b> Operationally positive. Load factor is the critical airline metric because most costs are fixed — if the aircraft is flying anyway, each extra passenger flows almost entirely to profit. But this came out 7 August and the stock fell 1.61% on 8 August. The market isn't buying the good traffic data, and the HSBC note below may explain why.</span></div>
+    </div>
+    <div class="news">
+      <div class="nh"><div class="nt"><span class="tick">THYAO</span><span class="tick">PGSUS</span><a href="https://haber.doviz.com/borsa-haberleri/hsbc-den-bilanco-sezonu-oncesi-hisse-analizi/901647" target="_blank"><span data-l="tr">HSBC: havacılıkta daha zayıf performans bekleniyor</span><span data-l="en">HSBC: weaker performance expected in aviation</span></a></div><span class="chip dn">▼ <span data-l="tr">AŞAĞI</span><span data-l="en">DOWN</span></span></div>
+      <div class="nd">20.07.2026 · <span data-l="tr">ayrıca 06.07.2026 havacılık hedef güncellemesi</span><span data-l="en">plus a 6 July aviation target update</span></div>
+      <div class="imp dn"><span data-l="tr"><b>Etki:</b> Bu, THYAO'nun son bir aydaki -%12,06'lık düşüşünü büyük ölçüde açıklıyor — rapor 20 Temmuz'da çıktı, düşüş tam o pencerede yoğunlaştı. Senin için ekstra önemli olan nokta: <b>hem THYAO hem PGSUS aynı sektörde</b>, yani tek bir olumsuz görüş portföyünün iki ayrı kalemini birden vuruyor. PGSUS'un aylık -%11,83'ü THYAO'nun -%12,06'sıyla neredeyse aynı — bu, iki hissenin fiilen tek bir bahis olduğunun sayısal kanıtı. Çeşitlendirme eksikliğinin somut maliyeti tam olarak budur.</span><span data-l="en"><b>Impact:</b> This largely explains THYAO's -12.06% monthly drop — the report came out 20 July and the decline concentrated in exactly that window. What matters extra for you: <b>THYAO and PGSUS are in the same sector</b>, so one negative view hits two separate lines at once. PGSUS's -11.83% monthly is nearly identical to THYAO's -12.06% — numerical proof that the two are effectively a single bet. That is the concrete cost of the diversification gap.</span></div>
+    </div>
+    <div class="news">
+      <div class="nh"><div class="nt"><span class="tick">PGSUS</span><a href="https://haber.doviz.com/gundem-haberleri/pegasus-yurt-disi-bilet-fiyatlarini-9-euroya-indirdi/908786" target="_blank"><span data-l="tr">Yurt dışı bilet fiyatlarını 9 euroya indirdi</span><span data-l="en">Cut international fares to €9</span></a></div><span class="chip fl">■ <span data-l="tr">KARIŞIK</span><span data-l="en">MIXED</span></span></div>
+      <div class="nd">2026</div>
+      <div class="imp fl"><span data-l="tr"><b>Etki:</b> İki yönlü okunabilir. Olumlu tarafı: agresif fiyatlama doluluk oranını yükseltir ve pazar payı kazandırır. Olumsuz tarafı: 9 euroluk bilet, bilet başına gelirin (yield) baskı altında olduğunu gösterir; düşük maliyetli havayollarında kârlılık yan gelirlerden (bagaj, koltuk seçimi) gelir ve bu kampanyalar genelde talebin zayıfladığı dönemlerde başlatılır. PGSUS'un 52 haftalık dibin %4'ünde olması ve yıllık -%41,36'sı, ikinci okumayı destekliyor.</span><span data-l="en"><b>Impact:</b> Readable both ways. Positive: aggressive pricing lifts load factor and wins share. Negative: a €9 fare signals yield per passenger is under pressure; low-cost carrier profitability comes from ancillaries (bags, seat selection), and such campaigns typically launch when demand softens. PGSUS sitting at 4% of its 52-week range and down 41.36% over the year supports the second reading.</span></div>
+    </div>
+    <div class="news">
+      <div class="nh"><div class="nt"><span class="tick">THYAO</span><span data-l="tr">AJet %30 indirimli kampanya · İstanbul Havalimanı 1 Ağustos'ta 289.260 yolcuyla rekor kırdı</span><span data-l="en">AJet launched a 30% discount campaign · Istanbul Airport set a record 289,260 passengers on 1 August</span></div><span class="chip fl">■ <span data-l="tr">KARIŞIK</span><span data-l="en">MIXED</span></span></div>
+      <div class="nd">01–08.2026</div>
+      <div class="imp fl"><span data-l="tr"><b>Etki:</b> Havalimanı rekoru talebin güçlü olduğunu gösteriyor ve THY'nin ana üssü olduğu için olumlu. Ancak AJet (THY'nin düşük maliyetli markası) %30 indirim başlatmış — Pegasus'un 9 euroluk kampanyasıyla aynı yönde bir sinyal. İki büyük oyuncunun da eş zamanlı fiyat indirimine gitmesi, yolcu sayısı yüksek olsa bile <b>bilet başına gelirin baskı altında</b> olduğunu düşündürüyor. Yani "rekor yolcu" ile "rekor kâr" aynı şey olmayabilir.</span><span data-l="en"><b>Impact:</b> The airport record shows strong demand and is positive for THY as its main hub. But AJet (THY's low-cost brand) launched a 30% discount — the same signal as Pegasus's €9 campaign. Both major players cutting prices simultaneously suggests <b>revenue per passenger is under pressure</b> even with high traffic. "Record passengers" and "record profit" may not be the same thing.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">MAKRO — tüm portföyü ilgilendiren</span><span data-l="en">MACRO — affecting the whole portfolio</span></h2>
+    <div class="news">
+      <div class="nh"><div class="nt"><span class="tick">ALTIN.S1</span><span data-l="tr">Gram altın %2,59 yükseldi (₺6.660,55), gram gümüş %3,57</span><span data-l="en">Gram gold rose 2.59% (₺6,660.55), gram silver 3.57%</span></div><span class="chip up">▲ <span data-l="tr">YUKARI</span><span data-l="en">UP</span></span></div>
+      <div class="nd">08.08.2026</div>
+      <div class="imp up"><span data-l="tr"><b>Etki:</b> ALTIN.S1 her lot 0,01 gram saf altına denk geldiği için gram altınla doğrudan hareket eder. Bu yükseliş, portföyündeki hisse kayıplarını kısmen dengeledi — günlük +%2,45 ile en iyi BIST kalemin oldu ve haftalık +%7,00 ile portföyünün en hızlı yükselen pozisyonu. Portföyünün tek gerçek çeşitlendiricisi bu; hisselerle düşük korelasyonu bugün somut olarak işe yaradı.</span><span data-l="en"><b>Impact:</b> ALTIN.S1 tracks gram gold directly since each lot equals 0.01g of pure gold. This rally partly offset your equity losses — it was your best BIST line at +2.45% today and your fastest riser at +7.00% for the week. It is the portfolio's only genuine diversifier, and its low correlation to equities paid off concretely today.</span></div>
+    </div>
+    <div class="news">
+      <div class="nh"><div class="nt"><span class="tick">BIST</span><span data-l="tr">BIST 100: 13.779,39 (-%0,14) · Dolar/TL 47,7111 · Brent 82,21 $ · TR 2 yıllık tahvil %41,30</span><span data-l="en">BIST 100: 13,779.39 (-0.14%) · USD/TRY 47.7111 · Brent $82.21 · TR 2-year bond 41.30%</span></div><span class="chip fl">■ <span data-l="tr">NÖTR</span><span data-l="en">NEUTRAL</span></span></div>
+      <div class="nd">08.08.2026</div>
+      <div class="imp fl"><span data-l="tr"><b>Etki:</b> Endeks neredeyse yatay (-%0,14) ama senin BIST kalemlerin -%0,38 düştü, yani endeksin biraz gerisinde kaldın — sebebi ASELS'in -%2,55'lik sert düşüşü. Brent 82 dolarda yatay: havayolları için yakıt maliyeti tarafında yeni bir baskı yok, bu THYAO ve PGSUS açısından nötr. TR 2 yıllık tahvil faizi %41,30; bu seviyede risksiz getiri yüksek demektir ve hisse senedine göre alternatif maliyeti yükseltir — özellikle temettü vermeyen, yüksek çarpanlı hisseler için olumsuz bir arka plan.</span><span data-l="en"><b>Impact:</b> The index was nearly flat (-0.14%) while your BIST lines fell 0.38%, so you slightly underperformed — driven by ASELS's sharp 2.55% drop. Brent flat at $82 means no fresh fuel-cost pressure for airlines, neutral for THYAO and PGSUS. The TR 2-year bond at 41.30% means the risk-free return is high, which raises the opportunity cost of holding equities — an unfavourable backdrop especially for high-multiple stocks that pay no dividend.</span></div>
+    </div>
+    <div class="news">
+      <div class="nh"><div class="nt"><span class="tick">BIST</span><a href="https://haber.doviz.com/borsa-haberleri/borsa-istanbul-da-alti-hisse-uzerindeki-tedbirler-kalkiyor/910897" target="_blank"><span data-l="tr">Borsa İstanbul'da altı hissede tedbirler kalkıyor</span><span data-l="en">Restrictions lifted on six Borsa İstanbul stocks</span></a></div><span class="chip fl">■ <span data-l="tr">NÖTR</span><span data-l="en">NEUTRAL</span></span></div>
+      <div class="nd">08.08.2026</div>
+      <div class="imp fl"><span data-l="tr"><b>Etki:</b> Volatilite Bazlı Tedbir Sistemi kapsamındaki açığa satış ve kredili işlem yasakları yeni haftada kademeli kalkıyor. Bu haber senin pozisyonlarının hiçbirini doğrudan adlandırmıyor — genel bilgi olarak eklendi. Ancak MASFN ve METEN gibi yeni ve oynak halka arzların bu tür tedbirlere takılma ihtimali diğerlerinden yüksektir; kendi hisselerinde tedbir olup olmadığını aracı kurum ekranından takip etmekte fayda var.</span><span data-l="en"><b>Impact:</b> Short-selling and margin bans under the volatility-based measures system are being lifted gradually in the new week. This item names none of your positions — it's included as general context. But new, volatile listings like MASFN and METEN are more likely than others to trigger such measures; worth watching your broker screen for any restrictions on your own holdings.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">Haber bulunamayan pozisyonlar</span><span data-l="en">Positions with no news found</span></h2>
+    <div class="nc d" style="margin-bottom:12px">
+      <span data-l="tr"><b>Bu bölümde uydurma içerik yok.</b> MASFN, METEN ve MOND için doviz.com'un ilgili haber sayfaları tarandı; bu şirketlere özel hiçbir haber bulunamadı, sayfalar yalnızca genel piyasa haberleri gösteriyor.</span>
+      <span data-l="en"><b>Nothing was invented here.</b> The relevant news pages on doviz.com were checked for MASFN, METEN and MOND; no company-specific items were found — those pages show only general market news.</span>
+    </div>
+    <p><span data-l="tr"><b>MASFN (Masfen Enerji) ve METEN (Metgün Enerji):</b> Her ikisi de temmuz sonunda halka arz oldu ve henüz analist takibi ya da düzenli haber akışı yok. Yeni halka arzlarda ilk anlamlı bilgi akışı genellikle ilk çeyreklik finansal rapor ve varsa halka arz sonrası ilk KAP bildirimleriyle gelir. Bu şirketler için şu an takip edilebilecek tek kaynak KAP (kap.org.tr) üzerindeki resmi bildirimler ve halka arz izahnameleridir.</span><span data-l="en"><b>MASFN (Masfen Enerji) and METEN (Metgün Enerji):</b> Both listed at the end of July and have no analyst coverage or regular news flow yet. For new listings, meaningful information usually starts with the first quarterly report and any post-listing regulatory filings. For now the only trackable sources are official disclosures on KAP (kap.org.tr) and the IPO prospectuses.</span></p>
+    <p><span data-l="tr"><b>MOND (Mondee Holdings):</b> Hisse başına 0,0001 dolar seviyesinde, fiilen değersiz. Bu fiyat seviyesindeki hisseler genelde borsa kotasyon kriterlerini kaybetmiş veya iflas sürecine girmiş şirketlerdir. Haber aramak yerine pozisyonu kapatmak daha anlamlı — portföy ekranında yer kaplamaktan başka bir işlevi yok.</span><span data-l="en"><b>MOND (Mondee Holdings):</b> At $0.0001 per share it is effectively worthless. Stocks at that level have typically lost listing compliance or entered bankruptcy proceedings. Rather than looking for news, closing the position makes more sense — it serves no function beyond occupying a line on your screen.</span></p>
+    <p><span data-l="tr"><b>ABOS (Acumen Pharmaceuticals):</b> Bu tur ABD tarafında yeni haber taranmadı; ABOS için ayrı bir zamanlanmış görev 7/24 yarım saatte bir çalışıyor ve klinik veri, FDA kararı, nakit durumu veya sermaye artırımı haberi çıkarsa bu sekmeye ekleyecek.</span><span data-l="en"><b>ABOS (Acumen Pharmaceuticals):</b> No fresh US-side news was scanned this round; a separate scheduled task runs every 30 minutes around the clock for ABOS and will add any clinical data, FDA decision, cash position or share-issuance news to this tab.</span></p>
+  </div>
+</div>
+
+<!-- ============ 4 TLY FONU ============ -->
+<div class="tp" id="p4">
+  <div class="nc w">
+    <span data-l="tr"><b>Bu sekme portföyünün %36'sını açıyor.</b> Aşağıdaki tüm veriler Tera Portföy'ün <b>3 Ağustos 2026'da açıkladığı Temmuz 2026 portföy dağılım raporundan</b> alınmıştır (kaynak: fintables.com). Ağırlıklar <b>toplam fonun</b> yüzdesidir, dolayısıyla senin dolaylı maruziyetin kesin olarak hesaplanabiliyor.</span>
+    <span data-l="en"><b>This tab opens up 36% of your portfolio.</b> All data below comes from Tera Portföy's <b>July 2026 holdings report, published 3 August 2026</b> (source: fintables.com). The weights are percentages <b>of the total fund</b>, so your indirect exposure can be calculated precisely.</span>
+  </div>
+
+  <div class="kpis" id="kpiTLY"></div>
+
+  <div class="g2">
+    <div class="card">
+      <h2><span data-l="tr">Varlık dağılımı</span><span data-l="en">Asset allocation</span></h2>
+      <p class="hint"><span data-l="tr">Temmuz 2026 raporu. Repo kalemi negatif — fon borçlanarak kaldıraç kullanıyor.</span><span data-l="en">July 2026 report. The repo line is negative — the fund borrows, i.e. uses leverage.</span></p>
+      <div class="cb" style="height:260px"><canvas id="cTlyAlloc"></canvas></div>
+    </div>
+    <div class="card">
+      <h2><span data-l="tr">Getiri (fintables verisi)</span><span data-l="en">Returns (per fintables)</span></h2>
+      <p class="hint"><span data-l="tr">Nominal TL getiri. Enflasyondan arındırılmamıştır.</span><span data-l="en">Nominal TRY return, not inflation-adjusted.</span></p>
+      <div class="cb" style="height:260px"><canvas id="cTlyRet"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">Fonun en büyük pozisyonları — ve senin dolaylı maruziyetin</span><span data-l="en">The fund's largest positions — and your indirect exposure</span></h2>
+    <p class="hint"><span data-l="tr">"Senin payın" sütunu, ₺35.120,71'lik TLY pozisyonunun içindeki karşılığıdır: fondaki ağırlık × pozisyon büyüklüğü.</span><span data-l="en">"Your share" is the portion of your ₺35,120.71 TLY position: fund weight × position size.</span></p>
+    <div class="sc"><table class="t" id="tTly"></table></div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">Bu rapordan çıkan sonuçlar</span><span data-l="en">What this report reveals</span></h2>
+    <div data-l="tr">
+      <p><b>TLY bir çeşitlendirme aracı değil, yoğunlaşmış bir hisse fonu.</b> Fonun %78,63'ü hisse senedinde ve tek bir hisse — OZATD — ağırlığın %34,27'sini oluşturuyor. Bu şu anlama geliyor: senin ₺35.120'lik fon pozisyonunun <b>₺12.036'sı tek bir şirkette</b>. Bu, ASELS pozisyonunla (₺11.320) aynı büyüklükte. Yani portföyündeki en büyük tek hisse riski aslında ASELS değil, adını muhtemelen hiç duymadığın OZATD olabilir.</p>
+      <p><b>OZATD'nin profili dikkat çekici.</b> Özata Denizcilik'in 52 haftalık aralığı ₺151,00 – ₺4.660,00; yani hisse bir yılda yaklaşık <b>29 katına</b> çıkmış (yıllık +%1.774,48). Sadece son bir ayda +%145,08. PD/DD oranı <b>71,16</b> — yani şirket defter değerinin 71 katına işlem görüyor (BIST'te tipik bir sanayi şirketi 1-3 arasındadır; senin ASELS'in 5,26). F/K verisi ise hiç yok. Bu rakamlar bir değerleme temeline değil, güçlü bir spekülatif harekete işaret ediyor. Böyle bir hissenin fonun en büyük pozisyonu olması, fonun risk profilini doğrudan belirliyor.</p>
+      <p><b>İlişkili taraf yoğunlaşması var.</b> Fonun 3. büyük pozisyonu TEHOL (Tera Yatırım Teknoloji Holding, %9,22) ve 5. büyük pozisyonu TERA (Tera Yatırım, %4,11). Fonun kurucusu ise TERA PORTFÖY YÖNETİMİ A.Ş. Dahası, TEHOL'ün ortaklık yapısına bakıldığında <b>TERA PORTFÖY BİRİNCİ SERBEST FON'un kendisi TEHOL'ün %22,70'ine sahip</b>; Tera Yatırım Menkul Değerler %9,15, Tera Yatırım Holding %5,11 daha ekliyor. Yani fon, yönetim şirketiyle aynı gruba bağlı şirketlere fonun yaklaşık %13'ünü yatırmış durumda. Bu tür yapılar Türkiye'de yasal ve kamuya açıklanır; ancak değerleme bağımsızlığı ve çıkış likiditesi açısından bilinmesi gereken bir durumdur.</p>
+      <p><b>Risk değeri 7/7.</b> SPK'nın standart risk ölçeğinde fonun risk değeri <b>7</b>, yani mümkün olan en yüksek kategori. Yıllık yönetim ücreti %2,00 ve stopaj %17,50. Satış valörü 2 gün — yani çıkmak istediğinde paran hemen elinde olmaz, iki iş günü sürer. Tarihsel volatilite %20,10.</p>
+      <p><b>Getiri rakamları olağanüstü ve dikkatli okunmalı.</b> fintables 1 yıllık getiriyi +%912,98, 3 yıllık getiriyi +%66.661 olarak gösteriyor. Bu rakamlar nominal TL cinsindendir ve enflasyondan arındırılmamıştır; ayrıca fonun 34%'ünün bir yılda 29 katına çıkan bir hissede olduğu düşünülürse, getirinin büyük kısmının tek bir pozisyondan gelmiş olması muhtemeldir. <b>Geçmiş getiri gelecek getiriyi göstermez</b> ve bu ölçekte bir getiri, aynı ölçekte bir düşüş riskinin de var olduğu anlamına gelir: OZATD tek başına %30 düşerse fonun yaklaşık %10'u, senin portföyünün yaklaşık %3,5'i buharlaşır.</p>
+      <p><b>Merak ettiğim şeyleri Tera Portföy'ün resmi sayfasından araştırdım, sonuçlar şöyle:</b></p>
+      <p><b>Nitelikli yatırımcı şartı var — ve bu kesin.</b> Tera Portföy kendi sıkça sorulan sorular bölümünde açıkça yazıyor: "Serbest fonlara yatırım yapabilmek için nitelikli yatırımcı statüsüne sahip olmak gerekmektedir." Fonun yatırımcı profili tanımı da aynı yönde: "yüksek risk seviyesine uygun <b>nitelikli yatırımcılar</b> için tasarlanmıştır." Yani bu fona girebilmiş olman, aracı kurumunda nitelikli yatırımcı statüsünün tanımlı olduğu anlamına geliyor. Bu statü, nakit ve sermaye piyasası araçları toplamının belirli bir tutarın üzerinde olmasıyla verilir.</p>
+      <p><b>Performans ücreti mekanizması var, ama oranı sitede yayımlanmamış.</b> Tera Portföy serbest fonların özelliklerini sayarken "ücretlendirme yapısı" ve "<b>performans primi</b>"ni ayrı maddeler olarak listeliyor. Yani serbest fonlarda yönetim ücretinin üstüne performans primi alınabiliyor. TLY için spesifik oran fon sayfasında yok — sadece %2 yıllık yönetim ücreti gösteriliyor. Kesin oran için fon izahnamesine bakman gerekiyor; Tera Portföy sayfasında indirilebilir PDF olarak duruyor.</p>
+      <p><b>Karşılaştırma ölçütü çarpıcı: %100 BIST-KYD 1 Aylık Mevduat TL Endeksi.</b> Yani fonun kendisini kıyasladığı gösterge <b>bir aylık mevduat faizi</b>. Buna karşılık fon %78,63 hisse senedinde, tek bir hissede %34 yoğunlaşmış ve repo ile borçlanıyor. Mevduat endeksine kıyaslanan bir fonun bu kadar risk taşıması, getirinin yüksek görünmesini kolaylaştırır — çünkü eşik değer çok düşük. Bu, fonun kötü olduğu anlamına gelmez ama "benchmark'ını katladı" ifadesinin ne kadar anlamlı olduğunu sorgulatır.</p>
+      <p><b>Emir kesme saati 13:00.</b> Alımda: 13:00'e kadar verilen emir ertesi iş gününün (T+1) fiyatıyla T+1'de gerçekleşir. Satımda: 13:00'e kadar verilen emir T+1 fiyatıyla <b>T+2'de</b> gerçekleşir. Senin 7 Ağustos 11:12'deki emrin kesim saatinden önce verilmiş, dolayısıyla 8 Ağustos fiyatıyla 8 Ağustos'ta gerçekleşmiş olmalı. "Bekliyor" görünmesi bu yüzden normaldi — ama artık gerçekleşip gerçekleşmediğini kontrol etmelisin.</p>
+      <p><b>Fon 11 Mart 2021'de ihraç edilmiş</b>, yani yaklaşık beş buçuk yıllık geçmişi var. Bağımsız denetim raporları 2021'den itibaren yayımlanmış durumda ve sitede indirilebiliyor — fonun geçmişini ciddi şekilde incelemek istersen en güvenilir kaynak bunlar.</p>
+      <p><b>Aynı yönetim şirketinin kardeş fonu bir ayda %38 kaybetti.</b> Tera Portföy'ün T3B (Üçüncü Serbest, hisse senedi yoğun, risk değeri 7) fonu son bir ayda <b>-%38,07</b> getiri gösterdi. DOH fonu (risk 6) -%14,44. Buna karşılık TLY aynı dönemde +%16,41. Bu üçü aynı ekip tarafından yönetiliyor ve hepsi yüksek riskli. T3B'nin durumu, risk değeri 7 olan bir Tera hisse fonunun tek bir ayda ne kaybedebileceğini gösteren somut bir örnek — TLY'nin geçmiş getirisi ne olursa olsun, aşağı yönlü potansiyelin büyüklüğü konusunda gerçekçi bir referans noktası.</p>
+    </div>
+    <div data-l="en">
+      <p><b>TLY is not a diversifier; it's a concentrated equity fund.</b> 78.63% of the fund sits in equities and one stock — OZATD — accounts for 34.27% of the weighting. That means <b>₺12,036 of your ₺35,120 fund position sits in a single company</b>. That's the same size as your ASELS holding (₺11,320). So your largest single-stock risk may not be ASELS at all, but OZATD — a name you've probably never heard of.</p>
+      <p><b>OZATD's profile is striking.</b> Özata Denizcilik's 52-week range is ₺151.00 – ₺4,660.00 — roughly a <b>29-fold</b> move in a year (+1,774.48%), including +145.08% in the last month alone. Its price-to-book is <b>71.16</b>, meaning it trades at 71 times book value (a typical BIST industrial sits at 1-3; your ASELS is 5.26). There's no P/E figure at all. These numbers point to a powerful speculative move rather than a valuation basis. Having such a stock as the fund's largest position directly defines the fund's risk profile.</p>
+      <p><b>There is related-party concentration.</b> The fund's third largest position is TEHOL (Tera Yatırım Technology Holding, 9.22%) and its fifth is TERA (Tera Yatırım, 4.11%). The fund's manager is TERA PORTFÖY YÖNETİMİ A.Ş. Furthermore, TEHOL's ownership structure shows that <b>TERA PORTFÖY BİRİNCİ SERBEST FON itself owns 22.70% of TEHOL</b>, with Tera Yatırım Menkul Değerler adding 9.15% and Tera Yatırım Holding 5.11%. So the fund has roughly 13% of its assets in companies belonging to its own manager's group. Such structures are legal and publicly disclosed in Turkey, but they matter for valuation independence and exit liquidity.</p>
+      <p><b>Risk score 7 out of 7.</b> On the regulator's standard scale the fund carries a risk score of <b>7</b> — the highest possible category. The annual management fee is 2.00% and withholding tax 17.50%. Redemption settles at T+2, so exiting doesn't put cash in your hand immediately. Historical volatility is 20.10%.</p>
+      <p><b>The return figures are extraordinary and should be read carefully.</b> fintables shows a 1-year return of +912.98% and 3-year of +66,661%. These are nominal TRY figures, not inflation-adjusted; and given 34% of the fund sits in a stock that rose 29-fold in a year, it's likely much of the return came from one position. <b>Past returns don't indicate future returns</b>, and a gain of this magnitude implies the potential for a decline of similar magnitude: if OZATD alone fell 30%, roughly 10% of the fund and about 3.5% of your total portfolio would evaporate.</p>
+      <p><b>I researched the open questions on Tera Portföy's official page. Here's what I found:</b></p>
+      <p><b>Qualified-investor status is required — confirmed.</b> Tera Portföy states plainly in its own FAQ: "To invest in free funds you must hold qualified-investor status." The fund's investor profile says the same: designed for "<b>qualified investors</b> suited to a high risk level." So the fact you're in this fund means your broker has that status defined on your account. It's granted when cash plus securities exceed a set threshold.</p>
+      <p><b>A performance-fee mechanism exists, but the rate isn't published on the site.</b> Tera lists "fee structure" and "<b>performance premium</b>" as separate features of free funds — meaning a performance fee can be charged on top of the management fee. No specific rate for TLY appears on the fund page; only the 2% annual management fee. The exact figure requires the prospectus, which is downloadable as a PDF from Tera's page.</p>
+      <p><b>The benchmark is striking: 100% BIST-KYD 1-Month TRY Deposit Index.</b> The fund measures itself against <b>one-month deposit rates</b>. Yet it holds 78.63% equities, is 34% concentrated in one stock, and borrows via repo. Being benchmarked to a deposit index makes returns look easy to beat, because the hurdle is very low. That doesn't make the fund bad, but it does question how meaningful "beat its benchmark" is here.</p>
+      <p><b>Order cutoff is 13:00.</b> Purchases: an order before 13:00 executes at the next business day's (T+1) price on T+1. Redemptions: an order before 13:00 executes at the T+1 price but settles on <b>T+2</b>. Your 7 August 11:12 order was before the cutoff, so it should have executed at the 8 August price on 8 August. "Pending" was therefore normal — but you should now check whether it actually filled.</p>
+      <p><b>The fund launched on 11 March 2021</b>, giving it roughly five and a half years of history. Independent audit reports from 2021 onward are published and downloadable on the site — the most reliable source if you want to examine the fund's track record seriously.</p>
+      <p><b>A sister fund from the same manager lost 38% in one month.</b> Tera's T3B (Third Free Fund, equity-intensive, risk score 7) returned <b>-38.07%</b> over the past month. Their DOH fund (risk 6) returned -14.44%. TLY returned +16.41% over the same period. All three are run by the same firm and all are high risk. T3B's outcome is a concrete illustration of what a risk-7 Tera equity fund can lose in a single month — a realistic reference point for downside magnitude, whatever TLY's past returns have been.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 5 ANALİZ ============ -->
+<div class="tp" id="p5">
+  <div class="card">
+    <h2><span data-l="tr">Portföyün gerçek risk haritası</span><span data-l="en">The portfolio's real risk map</span></h2>
+    <div data-l="tr">
+      <p><b>1 · Görünen yoğunlaşma ile gerçek yoğunlaşma farklı.</b> Ekranda en büyük kalem TLY (%36), ardından ASELS (%11,6) geliyor. Ama TLY'nin içini açtığında tablo değişiyor: fonun %34,27'si OZATD'de, bu da senin portföyünün <b>%12,34'ü</b> demek. Yani gerçek en büyük tek hisse riskin ASELS değil, OZATD olabilir — üstelik bunu satın aldığına dair bilinçli bir kararın yok. Buna TLY'nin diğer pozisyonlarını (DSTKF %4,33, TEHOL %3,32, PEKGY %3,16) eklediğinde, portföyünün üçte birinden fazlası senin seçmediğin hisselerde.</p>
+      <p><b>2 · Üç ayrı sektör yoğunlaşması var, ikisini fark etmemiş olabilirsin.</b> Havacılık açık olanı: THYAO (₺9.800) + PGSUS (₺614) = ₺10.414, hisse tarafının %22'si. İkincisi enerji: MASFN (₺3.609) + METEN (₺1.854) = ₺5.463, %11,7. Üçüncüsü ise TLY'nin içindeki finans/holding kümesi: DSTKF, TEHOL, TERA, TRHOL birlikte fonun %29,4'ü. Havacılık ikilisinin aynı anda hareket ettiğini bu ay somut olarak gördün: THYAO aylık -%12,06, PGSUS -%11,83. Neredeyse birebir aynı.</p>
+      <p><b>3 · Portföy tek bir haberden iki kez vurulabiliyor.</b> HSBC'nin temmuz raporları hem havacılık hem otomotiv için negatifti. Bu tek kurumun görüşü senin THYAO, PGSUS ve FROTO pozisyonlarını — toplam ₺19.317, hisse tarafının %41'i — aynı anda etkiledi. Çeşitlendirme, farklı kod tutmak değil, <b>farklı risk faktörlerine maruz kalmak</b> demektir. Şu anki yapıda üç farklı hisse taşıyorsun ama arkalarında büyük ölçüde tek bir makro tez var: Türkiye iç talebi ve döngüsel sektörler.</p>
+      <p><b>4 · Değerleme dağılımı çok geniş ve bu bir strateji belirsizliğine işaret ediyor.</b> ASELS F/K 39,11 / PD/DD 5,26 ile büyüme hissesi gibi fiyatlanıyor. THYAO F/K 3,77 / PD/DD 0,41 ile derin değer hissesi. PGSUS 8,90 / 0,66, FROTO 8,25 / 1,53 arada. TLY'nin en büyük pozisyonu OZATD ise PD/DD 71,16 ile saf spekülasyon bölgesinde. Bu dört farklı yatırım felsefesini aynı anda taşımak mümkündür, ancak her birinin ne zaman satılacağına dair kuralın farklı olması gerekir. Aynı çıkış kuralını hepsine uygularsan, hangisinin neden portföyde olduğunu takip edemezsin.</p>
+      <p><b>5 · Nakit tamponu yok.</b> ~₺97,5 bin hesapta ₺90,98 alım gücü var. FROTO ve PGSUS 52 haftalık diplerine %5'ten yakın mesafede; eğer bu seviyeleri fırsat olarak görüyorsan kullanacak kaynağın yok. Aynı şekilde beklenmedik bir takas ihtiyacında da esnekliğin yok. Nakit sadece getiri kaybı değildir, aynı zamanda opsiyon değeridir.</p>
+      <p><b>6 · Kur riski neredeyse tamamen tek yönlü.</b> Portföyün fiilen tamamı TL cinsi. ABD tarafı $323 ile %0,3'ün altında ve yarısı değersiz MOND. Buna karşılık iki dolaylı koruman var: ASELS'in ihracat sözleşmelerinden gelen döviz geliri ve ALTIN.S1'in altın bağlantısı. Bunlar gerçek ama kısmi korumalar — bilinçli bir kur pozisyonu değil, yan etki.</p>
+    </div>
+    <div data-l="en">
+      <p><b>1 · Visible concentration and real concentration differ.</b> On screen the largest line is TLY (36%), then ASELS (11.6%). But opening up TLY changes the picture: 34.27% of the fund sits in OZATD, which is <b>12.34%</b> of your total portfolio. So your true largest single-stock risk may be OZATD, not ASELS — and you never made a conscious decision to buy it. Adding TLY's other positions (DSTKF 4.33%, TEHOL 3.32%, PEKGY 3.16%), more than a third of your portfolio sits in stocks you didn't pick.</p>
+      <p><b>2 · There are three sector concentrations; you may have noticed only one.</b> Aviation is the obvious one: THYAO (₺9,800) + PGSUS (₺614) = ₺10,414, 22% of the equity side. The second is energy: MASFN (₺3,609) + METEN (₺1,854) = ₺5,463, 11.7%. The third is the finance/holding cluster inside TLY: DSTKF, TEHOL, TERA and TRHOL together are 29.4% of the fund. You saw the airline pair move together concretely this month: THYAO -12.06% monthly, PGSUS -11.83%. Almost identical.</p>
+      <p><b>3 · One piece of news can hit the portfolio twice.</b> HSBC's July reports were negative on both aviation and autos. That single house's view affected your THYAO, PGSUS and FROTO positions — ₺19,317 combined, 41% of the equity side — simultaneously. Diversification isn't holding different tickers; it's being exposed to <b>different risk factors</b>. As structured, you hold three different stocks sitting largely on one macro thesis: Turkish domestic demand and cyclical sectors.</p>
+      <p><b>4 · The valuation spread is very wide, which points to strategy ambiguity.</b> ASELS is priced like a growth stock at P/E 39.11 / P/B 5.26. THYAO is a deep-value stock at 3.77 / 0.41. PGSUS (8.90 / 0.66) and FROTO (8.25 / 1.53) sit in between. TLY's largest position OZATD, at 71.16 times book, is in outright speculative territory. Holding four different investment philosophies at once is possible, but each needs its own rule for when to sell. Applying one exit rule to all of them means losing track of why each is there.</p>
+      <p><b>5 · There is no cash buffer.</b> ₺90.98 of buying power on a ~₺97.5k account. FROTO and PGSUS sit within 5% of their 52-week lows; if you see those levels as opportunities, you have nothing to deploy. You also have no flexibility for an unexpected settlement need. Cash isn't just forgone return — it's option value.</p>
+      <p><b>6 · Currency risk is almost entirely one-directional.</b> Effectively the whole portfolio is TRY-denominated. The US side is under 0.3% at $323, half of it worthless MOND. Against that you have two indirect hedges: ASELS's FX revenue from export contracts, and ALTIN.S1's gold linkage. These are real but partial protections — a side effect, not a deliberate currency position.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">Pozisyon pozisyon değerlendirme</span><span data-l="en">Position-by-position assessment</span></h2>
+    <div class="fg" id="fund"></div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">Öne çıkan riskler ve netleştirilecekler</span><span data-l="en">Key risks and things to clarify</span></h2>
+    <div class="fl2">
+      <div class="flg"><b><span data-l="tr">En büyük yapısal risk</span><span data-l="en">Biggest structural risk</span></b>
+        <span data-l="tr">Portföyün %36'sı, risk değeri 7/7 olan ve tek bir hissede %34 yoğunlaşan aktif yönetilen bir fonda. Bu fonun içeriğini sen seçmiyorsun ve ayda bir raporlanıyor.</span>
+        <span data-l="en">36% of the portfolio sits in an actively managed fund with a 7/7 risk score and 34% concentration in a single stock. You don't choose its contents and it reports monthly.</span></div>
+      <div class="flg"><b><span data-l="tr">En büyük tekil pozisyon riski</span><span data-l="en">Biggest single-position risk</span></b>
+        <span data-l="tr">OZATD dolaylı olarak ₺12.036. Bir yılda 29 katına çıkmış, PD/DD 71,16. Bu seviyede bir hissede %30'luk bir düzeltme portföyünün ~%3,5'ini götürür.</span>
+        <span data-l="en">OZATD indirectly at ₺12,036. Up 29-fold in a year, P/B 71.16. A 30% correction in a stock at that level would cost roughly 3.5% of your portfolio.</span></div>
+      <div class="flg w"><b><span data-l="tr">Acil teyit edilmesi gereken</span><span data-l="en">Needs immediate confirmation</span></b>
+        <span data-l="tr">TLY emri "Bekliyor" durumunda. Alış valörü 1 gün olduğu için 7 Ağustos'taki emrin 8 Ağustos'ta valörlenmiş olması beklenir. ₺35.120 gerçekten hesabına geçti mi?</span>
+        <span data-l="en">The TLY order shows "Pending". With T+1 settlement, the 7 August order should have cleared on 8 August. Did the ₺35,120 actually land?</span></div>
+      <div class="flg w"><b><span data-l="tr">Öğrenilmesi gerekenler</span><span data-l="en">Things to find out</span></b>
+        <span data-l="tr">TLY'de performans ücreti var mı, nitelikli yatırımcı şartı aranıyor mu, izahnamede çıkış kısıtı var mı. MASFN ve METEN izahnamelerinde lock-up süresi ne kadar.</span>
+        <span data-l="en">Whether TLY charges a performance fee, requires qualified-investor status, or has exit restrictions in its prospectus. And the lock-up periods in the MASFN and METEN prospectuses.</span></div>
+      <div class="flg g"><b><span data-l="tr">İyi çalışan taraf</span><span data-l="en">What's working</span></b>
+        <span data-l="tr">ALTIN.S1 amacına uygun davranıyor: hisseler düşerken günlük +%2,45, haftalık +%7,00. Ekim 2025'ten beri tutulan kısım portföyün tek uzun vadeli çapası.</span>
+        <span data-l="en">ALTIN.S1 behaves as intended: +2.45% today and +7.00% for the week while equities fell. The portion held since October 2025 is the portfolio's only long-term anchor.</span></div>
+      <div class="flg g"><b><span data-l="tr">İyi bir karar</span><span data-l="en">A good decision</span></b>
+        <span data-l="tr">6 Temmuz'da yeni parayı tek bir varlığa değil, altın ve hisse arasında bölmen. THYAO %12 düşerken altın artıda kaldı ve zararın büyümesini engelledi.</span>
+        <span data-l="en">On 6 July you split the new money between gold and equities rather than one asset. THYAO fell 12% while gold stayed positive, limiting the damage.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">Bu panelin sınırları</span><span data-l="en">Limits of this dashboard</span></h2>
+    <p><span data-l="tr">Burada yatırım tavsiyesi yoktur ve verilmeyecektir. Ne alınacağı, satılacağı veya tutulacağı senin kararındır. Panelin yaptığı şey, dağınık halde duran veriyi bir araya getirip görünür kılmaktır.</span><span data-l="en">There is no investment advice here and there won't be. What to buy, sell or hold is your decision. What this dashboard does is bring scattered data together and make it visible.</span></p>
+    <ul class="li">
+      <li><span data-l="tr">BIST fiyatları 15 dakika gecikmelidir; anlık alım-satım kararı için yeterince hassas değildir.</span><span data-l="en">BIST prices are 15 minutes delayed and not precise enough for live trading decisions.</span></li>
+      <li><span data-l="tr">TLY portföy dağılımı ayda bir açıklanır; bugünkü içerik temmuz sonu itibarıyladır ve bugün farklı olabilir.</span><span data-l="en">TLY's holdings are disclosed monthly; today's content reflects end-July and may differ now.</span></li>
+      <li><span data-l="tr">Kapanmış pozisyonların (SARAE, DIRIT, EDATA ve eski altın turları) gerçekleşmiş kâr/zararı hesaba dahil değildir.</span><span data-l="en">Realised P&amp;L from closed positions (SARAE, DIRIT, EDATA and older gold round trips) is not included.</span></li>
+      <li><span data-l="tr">Komisyon, stopaj ve diğer işlem maliyetleri hesaplamalara dahil edilmemiştir.</span><span data-l="en">Commissions, withholding tax and other transaction costs are not included in the calculations.</span></li>
+      <li><span data-l="tr">Haber etkisi değerlendirmeleri yorumdur; piyasa çoğu zaman haberi zaten fiyatlamıştır.</span><span data-l="en">News impact assessments are interpretation; markets have usually priced the news already.</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ 6 SONRAKİ ADIM ============ -->
+<div class="tp" id="p6">
+  <div class="nc i">
+    <span data-l="tr"><b>Tarama yöntemi.</b> BIST'te işlem gören 625 hisse işlem hacmine göre sıralandı, en likit 45 isim alındı, portföyünde zaten bulunan sektörler elendi ve kalan adaylar altı objektif kriterde puanlandı: PD/DD, F/K, aylık momentum, yıllık performans, fiili dolaşım oranı ve portföyüne sağlayacağı çeşitlendirme. En yüksek puanı alan beş isim aşağıda — her biri için temel veriler, güncel haberler, analist görüşleri ve <b>riskler</b> ayrı ayrı yazıldı. Bu bir analizdir, alım tavsiyesi değildir; riskleri de en az olumlu tarafı kadar ayrıntılı yazdım.</span>
+    <span data-l="en"><b>Screening method.</b> All 625 BIST-listed stocks were ranked by trading volume, the 45 most liquid were taken, sectors already in your portfolio were excluded, and the remaining candidates scored on six objective criteria: P/B, P/E, monthly momentum, yearly performance, free float, and diversification benefit to your portfolio. The five highest scorers are below — each with fundamentals, current news, analyst views and <b>risks</b> set out separately. This is analysis, not a buy recommendation; the risks are written in at least as much detail as the positives.</span>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">Taramanın öne çıkardığı beş hisse</span><span data-l="en">Five stocks the screen surfaced</span></h2>
+    <p class="hint"><span data-l="tr">Sıralama tarama puanına göre. Risk derecesi; değerleme çarpanları, likidite, momentum kırılması ve 52 haftalık aralıktaki konumdan türetilmiştir. Fiyat çubuğu 52 haftalık aralıktaki yeri gösterir.</span><span data-l="en">Ordered by screen score. Risk grade derives from valuation multiples, liquidity, momentum breaks and position in the 52-week range. The bar shows placement within the 52-week range.</span></p>
+    <div id="cands"></div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">Analizin bütününden çıkan okuma</span><span data-l="en">Reading across the whole analysis</span></h2>
+    <div data-l="tr">
+      <p><b>Beş ismin ikisi net biçimde öne çıkıyor, ama farklı sebeplerle.</b> TUPRS taramanın en yüksek puanlısı ve tek kurumsal onaylı adayı — İş Yatırım model portföyüne aldı, Fitch not görünümünü yükseltti, rafineri marjı ikiye katlandı ve tüm bunlara rağmen F/K 8,57'de kaldı. Buradaki tek ama önemli soru zamanlama: hisse 52 haftalık aralığın %95,4'ünde. KCHOL ise tam tersi profilde — defter değerinin %36 altında, ilk yarı kârı %146,5 artmış, ama momentum ılımlı ve likidite dar. Biri momentum hikâyesi, diğeri değer hikâyesi.</p>
+      <p><b>Portföyünün asıl ihtiyacı bu listede BIMAS ve MGROS'ta karşılık buluyor.</b> Şu anki portföyün <b>tamamen döngüsel</b>: havacılık, otomotiv, savunma, enerji. Ekonomi yavaşladığında bu sektörlerin hepsi aynı anda baskı görür — nitekim temmuzda otomotiv pazarı %25 daraldı ve HSBC havacılıkta zayıflık öngördü. Gıda perakendesi bu döngünün dışındadır. BİM'in indirim modeli sıkışma dönemlerinde pazar payı kazanır, yani senin mevcut pozisyonlarının zarar gördüğü ortamda değer kazanabilir. Çeşitlendirmenin ders kitabı tanımı budur: farklı koşullarda farklı davranan varlıklar.</p>
+      <p><b>AKBNK'i listeye koydum ama arkasındaki kurumsal görüş açıkça olumsuz.</b> F/K 5,25 ile taramanın en ucuzu ve bankacılık portföyünde hiç yok — bu iki gerekçe onu listeye sokmaya yetti. Ancak Bank of America Türk bankalarında tavsiye düşürdü, Goldman Sachs hedeflerini aşağı revize etti. İki büyük kurumun aynı yönde negatif olması ciddiye alınması gereken bir sinyal. Ucuzluk her zaman fırsat değildir; bazen piyasanın gördüğü bir sorunun fiyata yansımasıdır. Bu ismi "ucuz ama tartışmalı" kategorisinde okumanı öneririm.</p>
+      <p><b>Bir örüntü dikkatimi çekti:</b> Bu taramada bulduğum üç kurumsal analist görüşünden ikisi (BofA ve Goldman, bankalar için) olumsuz, biri (İş Yatırım, Tüpraş için) olumlu. Senin mevcut portföyün için bulduğum görüşler de benzer şekilde ağırlıklı olumsuzdu — HSBC hem havacılıkta hem otomotivde negatif. Yani genel kurumsal ton Türkiye hisselerinde şu an temkinli; bu, bir sonraki adımını planlarken bilmen gereken bir arka plan.</p>
+      <p><b>Listede olmayan ama değinmem gereken iki isim:</b> EREGL (Ereğli Demir Çelik) taramada eşit puan aldı ancak F/K 35,11 ve haftalık -%9,07 ile elendi. TTKOM (Türk Telekom) PD/DD 0,72 ve F/K 6,24 ile ucuz görünüyor, telekom da portföyünde yok — ama fiili dolaşım oranı yalnızca %13,24, yani likidite çok dar ve hem aylık hem yıllık getirisi negatif.</p>
+    </div>
+    <div data-l="en">
+      <p><b>Two of the five stand out clearly, but for different reasons.</b> TUPRS is the highest scorer and the only institutionally endorsed candidate — İş Yatırım added it to its model portfolio, Fitch raised its outlook, the refining margin doubled, and despite all that the P/E is still 8.57. The one important question is timing: it sits at 95.4% of its 52-week range. KCHOL is the opposite profile — 36% below book, H1 profit up 146.5%, but moderate momentum and thin liquidity. One is a momentum story, the other a value story.</p>
+      <p><b>Your portfolio's real need is met by BIMAS and MGROS on this list.</b> Your holdings are <b>entirely cyclical</b>: aviation, autos, defence, energy. When the economy slows all of these come under pressure at once — indeed the July auto market contracted 25% and HSBC projected aviation weakness. Food retail sits outside that cycle. BİM's discount model gains share during squeezes, meaning it can appreciate in exactly the environment that hurts your current positions. That's the textbook definition of diversification: assets that behave differently under different conditions.</p>
+      <p><b>I included AKBNK, but the institutional view behind it is clearly negative.</b> At P/E 5.25 it's the cheapest in the screen and banking is entirely absent from your portfolio — those two reasons earned its place. But Bank of America downgraded Turkish banks and Goldman Sachs revised targets down. Two major houses negative in the same direction is a signal worth taking seriously. Cheapness isn't always opportunity; sometimes it's a problem the market sees being priced in. I'd read this name as "cheap but contested".</p>
+      <p><b>A pattern caught my attention:</b> of the three institutional analyst views found in this screen, two (BofA and Goldman, on banks) are negative and one (İş Yatırım, on Tüpraş) is positive. The views I found on your existing portfolio were similarly negative-leaning — HSBC bearish on both aviation and autos. The general institutional tone on Turkish equities is currently cautious; useful background when planning your next move.</p>
+      <p><b>Two names not on the list but worth mentioning:</b> EREGL (Ereğli Demir Çelik) scored equally but was excluded on a P/E of 35.11 and a weekly -9.07%. TTKOM (Türk Telekom) looks cheap at P/B 0.72 and P/E 6.24, and telecom is absent from your portfolio — but its free float is only 13.24%, so liquidity is very thin, and both monthly and yearly returns are negative.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">1 · Portföyünün yapısal boşlukları</span><span data-l="en">1 · Structural gaps in your portfolio</span></h2>
+    <p class="hint"><span data-l="tr">Bunlar hisse seçimi değil, varlık dağılımı gözlemleri — ve bence bir sonraki kararın için hangi hisseyi seçtiğinden daha belirleyici.</span><span data-l="en">These are asset-allocation observations rather than stock picks — and arguably more decisive for your next move than which stock you choose.</span></p>
+    <div class="fl2" style="grid-template-columns:1fr">
+      <div class="flg"><b><span data-l="tr">Nakit yok — en somut boşluk</span><span data-l="en">No cash — the most concrete gap</span></b>
+        <span data-l="tr">₺97,5 bin hesapta ₺90,98 alım gücü var, yani sıfıra yakın. FROTO 52 haftalık aralığın %5,5'inde, PGSUS %4,0'ında. Bu seviyeleri fırsat olarak görüyorsan bile kullanacak kaynağın yok. Nakit sadece "getiri kaybı" değildir; düşüşte hareket edebilme opsiyonudur ve şu an bu opsiyona sahip değilsin.</span>
+        <span data-l="en">₺90.98 of buying power on a ₺97.5k account — effectively zero. FROTO sits at 5.5% of its 52-week range, PGSUS at 4.0%. Even if you see those levels as opportunities, you have nothing to deploy. Cash isn't just forgone return; it's the option to act during declines, and you don't currently hold that option.</span></div>
+      <div class="flg w"><b><span data-l="tr">Risksiz getiri %41,30 — ve portföyünde hiç yok</span><span data-l="en">Risk-free yield is 41.30% — and you hold none of it</span></b>
+        <span data-l="tr">TR 2 yıllık tahvil faizi %41,30. Bu, hisse senedi riski almadan elde edilebilen getiri anlamına geliyor. Portföyünde tahvil, mevduat veya para piyasası fonu yok. Bu bir eksiklik değil bilinçli bir tercih olabilir — ama şunu bil: hisse tarafın son beş haftada -%2,53 yaparken, aynı parayı risksiz araçta tutmak pozitif getiri sağlardı. Yüksek risksiz faiz ortamı, özellikle temettü vermeyen ve yüksek çarpanlı hisseler için zorlu bir arka plandır.</span>
+        <span data-l="en">The TR 2-year bond yields 41.30% — return available without taking equity risk. You hold no bonds, deposits or money-market funds. That may be a deliberate choice rather than an oversight, but note: while your equity side returned -2.53% over five weeks, the same money in risk-free instruments would have produced a positive return. A high risk-free rate is a hard backdrop for non-dividend, high-multiple stocks in particular.</span></div>
+      <div class="flg"><b><span data-l="tr">Döviz maruziyeti fiilen sıfır</span><span data-l="en">FX exposure is effectively zero</span></b>
+        <span data-l="tr">Portföyünün tamamına yakını TL cinsi. ABD tarafı $323 ile %0,3'ün altında ve yarısı değersiz MOND. İki dolaylı korumanın var: ASELS'in ihracat gelirleri ve ALTIN.S1'in altın bağlantısı. Ama bunlar yan etki, bilinçli bir kur pozisyonu değil. TL'de bir değer kaybı senaryosunda portföyün bundan doğrudan etkilenir.</span>
+        <span data-l="en">Nearly all of your portfolio is TRY-denominated. The US side is under 0.3% at $323, half of it worthless MOND. You have two indirect hedges — ASELS's export revenue and ALTIN.S1's gold linkage — but they're side effects, not a deliberate currency position. In a TRY depreciation scenario your portfolio is directly exposed.</span></div>
+      <div class="flg"><b><span data-l="tr">Üç sektör yoğunlaşması, tek makro tez</span><span data-l="en">Three sector concentrations, one macro thesis</span></b>
+        <span data-l="tr">Havacılık (THYAO + PGSUS, hisse tarafının %22'si), enerji (MASFN + METEN, %11,7) ve TLY'nin içindeki finans/holding kümesi (fonun %29,4'ü). Üstüne HSBC'nin hem havacılık hem otomotiv için negatif görüşü THYAO, PGSUS ve FROTO'yu — hisse tarafının %41'ini — aynı anda etkiledi. Yeni para koyarken sorman gereken soru "hangi hisse yükselir" değil, "portföyümde olmayan hangi risk faktörüne maruz kalmalıyım".</span>
+        <span data-l="en">Aviation (THYAO + PGSUS, 22% of the equity side), energy (MASFN + METEN, 11.7%) and the finance/holding cluster inside TLY (29.4% of the fund). On top of that, HSBC's negative view on both aviation and autos hit THYAO, PGSUS and FROTO — 41% of your equity side — simultaneously. When deploying new money the question isn't "which stock will rise" but "which risk factor am I not yet exposed to".</span></div>
+      <div class="flg"><b><span data-l="tr">Tek bir fon portföyün %36'sı</span><span data-l="en">One fund is 36% of the portfolio</span></b>
+        <span data-l="tr">TLY, risk değeri 7/7 olan ve tek bir hissede (OZATD) %34,27 yoğunlaşan bir fon. Yeni para koymadan önce cevaplanması gereken soru şu: mevcut yoğunlaşmayı artırmak mı istiyorsun, yoksa dengelemek mi? Aynı yönetim şirketinin T3B fonu geçen ay -%38,07 yaptı — risk değeri 7'nin ne demek olduğunun somut örneği.</span>
+        <span data-l="en">TLY is a fund with a 7/7 risk score and 34.27% concentration in a single stock (OZATD). Before adding new money, the question to answer is whether you want to increase the existing concentration or balance it. The same manager's T3B fund returned -38.07% last month — a concrete illustration of what a risk score of 7 means.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">3 · Yeni para koyarken kullanabileceğin objektif filtreler</span><span data-l="en">3 · Objective filters for deploying new money</span></h2>
+    <p><span data-l="tr">Aşağıdakiler hisse önerisi değil, <b>eleme kriterleri</b>. Bir aday hisseyi bu sorulardan geçirirsen, en azından portföyünde şu an tekrarlanan hataları tekrarlamamış olursun. Her kriterin yanında senin portföyünün o kriterde nerede durduğunu da yazdım.</span><span data-l="en">These are not stock suggestions but <b>screening criteria</b>. Running a candidate through these questions at least avoids repeating the mistakes currently present in your portfolio. Next to each criterion I've noted where your portfolio stands on it.</span></p>
+    <div class="sc"><table class="t" id="tFilter"></table></div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">4 · Analist görüşleri hakkında dürüst not</span><span data-l="en">4 · An honest note on analyst views</span></h2>
+    <div data-l="tr">
+      <p>Bu sekme için resmi analist konsensüs verisi (kaç kurum "al", kaç kurum "tut", kaç kurum "sat" diyor ve ortalama hedef fiyat ne) aramaya çalıştım. <b>Ücretsiz kaynaklarda bulamadım.</b> doviz.com bu veriyi yayımlamıyor, fintables'ın ilgili bölümü ücretli üyelik arkasında, web arama oturum limitine takıldı. Bulunmayan bir veriyi uydurmaktansa bulamadığımı söylemeyi tercih ediyorum.</p>
+      <p><b>Bulabildiğim gerçek analist görüşleri şunlar:</b></p>
+      <ul class="li">
+        <li><b>HSBC — Ford Otosan:</b> yatırım tavsiyesi "Al"dan "<b>Tut</b>"a indirildi. Aynı raporda Tofaş ve Türk Traktör dahil Türk otomotiv hisselerinin hedef fiyatları aşağı revize edildi.</li>
+        <li><b>HSBC — havacılık:</b> 20 Temmuz'daki bilanço sezonu öncesi raporda havacılık, telekomünikasyon ve gayrimenkul sektörlerinde <b>zayıf performans</b> öngörüldü. Ayrıca 6 Temmuz'da havacılık hisseleri için hedef fiyat güncellemesi yayımlandı.</li>
+        <li><b>Altın:</b> küresel bankalar ons altın hedeflerini yukarı revize etti; bazı kurumlar <b>5.300 dolar</b> seviyesini telaffuz ediyor. Gerekçe olarak merkez bankası alımları ve güvenli liman talebi gösteriliyor. Bu, portföyündeki ALTIN.S1 pozisyonunu doğrudan ilgilendiriyor.</li>
+      </ul>
+      <p>Dikkat çeken nokta: elimdeki üç analist görüşünden ikisi senin pozisyonların için olumsuz (FROTO ve havacılık ikilisi), biri olumlu (altın). Bu, portföyünün mevcut yapısıyla ilgili bir şey söylüyor.</p>
+      <p><b>Bu veriyi düzgün almak istersen:</b> aracı kurumunun kendi araştırma raporları genelde ücretsizdir ve hedef fiyat içerir. Ayrıca İş Yatırım, Ak Yatırım, Garanti BBVA Yatırım gibi kurumların halka açık günlük bültenleri hedef fiyat tablolarını yayımlar. KAP (kap.org.tr) üzerinden de şirketlerin resmi bildirimlerine ücretsiz ulaşabilirsin — analist yorumu değil ama en birincil kaynak odur.</p>
+    </div>
+    <div data-l="en">
+      <p>I tried to find formal analyst consensus data for this tab (how many houses say buy, hold or sell, and the average target price). <b>I couldn't find it in free sources.</b> doviz.com doesn't publish it, fintables' relevant section is behind a paywall, and web search hit a session limit. Rather than invent data that isn't there, I'd rather tell you I couldn't find it.</p>
+      <p><b>Here are the real analyst views I did find:</b></p>
+      <ul class="li">
+        <li><b>HSBC — Ford Otosan:</b> rating cut from Buy to <b>Hold</b>. The same report revised down target prices across Turkish autos including Tofaş and Türk Traktör.</li>
+        <li><b>HSBC — aviation:</b> its 20 July pre-earnings report projected <b>weak performance</b> in aviation, telecom and real estate. It also published an aviation target-price update on 6 July.</li>
+        <li><b>Gold:</b> global banks have revised ounce targets upward, with some citing <b>$5,300</b>. The stated drivers are central bank buying and safe-haven demand. This directly concerns your ALTIN.S1 position.</li>
+      </ul>
+      <p>Worth noting: of the three analyst views I have, two are negative for your positions (FROTO and the airline pair) and one is positive (gold). That says something about your portfolio's current structure.</p>
+      <p><b>If you want this data properly:</b> your own broker's research reports are usually free and include target prices. Houses like İş Yatırım, Ak Yatırım and Garanti BBVA Yatırım publish public daily bulletins with target-price tables. You can also access companies' official filings free via KAP (kap.org.tr) — not analyst commentary, but the most primary source there is.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span data-l="tr">5 · Son söz</span><span data-l="en">5 · Final word</span></h2>
+    <p><span data-l="tr">Bu panelin sana verebileceği en dürüst katkı, hangi hisseyi alacağını söylemek değil — <b>kendi portföyünde ne olduğunu net göstermek</b>. Bugün itibarıyla bilmediğin üç şeyi öğrendin: TLY'nin içinde ne olduğunu, sermayenin yarısının beş haftalık olduğunu, ve üç ayrı sektörde yoğunlaştığını. Bir sonraki kararı bunları bilerek vereceksin; bu, herhangi bir hisse önerisinden daha değerli.</span>
+    <span data-l="en">The most honest contribution this dashboard can make isn't telling you which stock to buy — it's <b>showing you clearly what's actually in your portfolio</b>. As of today you've learned three things you didn't know: what's inside TLY, that half your capital is five weeks old, and that you're concentrated across three separate sectors. You'll make your next decision knowing these — which is worth more than any stock tip.</span></p>
+    <p><span data-l="tr">Karar vermeden önce cevaplamanı önerdiğim sorular: Bu para ne kadar süre yatırımda kalacak? Portföyün %20 düşerse ne yaparsın — satar mısın, eklersin mi, beklersin mi? Ve elindeki her pozisyon için, hangi koşulda satacağını önceden yazdın mı? Bu üçüncü soru en önemlisi, çünkü çıkış kuralı olmayan bir pozisyon zamanla kendiliğinden "uzun vadeli yatırım" haline geliyor.</span>
+    <span data-l="en">Questions worth answering before you decide: how long will this money stay invested? If the portfolio fell 20%, what would you do — sell, add, or wait? And for each position you hold, have you written down in advance the condition under which you'd sell? That third question matters most, because a position without an exit rule quietly becomes a "long-term investment" by default.</span></p>
+  </div>
+</div>
+
+<div class="foot">
+  <span data-l="tr">Yatırım tavsiyesi değildir. Fiyatlar doviz.com (Forinvest) kaynaklı ve 15 dakika gecikmelidir. TLY verisi fintables.com, Temmuz 2026 portföy dağılım raporu. Pozisyon adet ve maliyetleri paylaştığın işlem geçmişinden doğrulanmıştır.</span>
+  <span data-l="en">Not investment advice. Prices from doviz.com (Forinvest), 15 minutes delayed. TLY data from fintables.com, July 2026 holdings report. Position quantities and costs verified against the transaction history you shared.</span>
+</div>
+</div>
+
+<script>
+Chart.defaults.color="#8d99a8";Chart.defaults.borderColor="#242c38";
+Chart.defaults.font.family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif";
+const USDTRY=47.7111;
+
+const DATES=["02-09","02-10","02-11","02-12","02-13","02-16","02-17","02-18","02-19","02-20","02-23","02-24","02-25","02-26","02-27","03-02","03-03","03-04","03-05","03-06","03-09","03-10","03-11","03-12","03-13","03-16","03-17","03-18","03-19","03-23","03-24","03-25","03-26","03-27","03-30","03-31","04-01","04-02","04-03","04-06","04-07","04-08","04-09","04-10","04-13","04-14","04-15","04-16","04-17","04-20","04-21","04-22","04-24","04-27","04-28","04-29","04-30","05-04","05-05","05-06","05-07","05-08","05-11","05-12","05-13","05-14","05-15","05-18","05-20","05-21","05-22","05-25","05-26","06-01","06-02","06-03","06-04","06-05","06-08","06-09","06-10","06-11","06-12","06-15","06-16","06-17","06-18","06-19","06-22","06-23","06-24","06-25","06-26","06-29","06-30","07-01","07-02","07-03","07-06","07-07","07-08","07-09","07-10","07-13","07-14","07-16","07-17","07-20","07-21","07-22","07-23","07-24","07-27","07-28","07-29","07-30","07-31","08-03","08-04","08-05","08-06","08-07"];
+const SER={
+ASELS:[292,298.25,294,301.5,302.25,296.5,294,310.25,307,313.25,310.5,309,306.25,311,322,340,322.25,333,345,333.5,319,334.25,335.75,330,322.25,320.5,341.25,348.75,338.75,353.25,352,337.5,338,330.75,320.5,320.25,320.25,336.5,330.5,337,342,362.25,376.75,398.5,415.25,411.75,416.75,411,414,408,396.5,396.5,392,415,414.5,425.5,420.25,433,427.25,434,428,428.5,431.75,419.25,412.75,415.5,415,402,393.5,377.75,410,401.75,380.25,384,407.75,383.5,362.25,363,368,357.25,376.75,377.75,371.25,375.75,394,395,410.75,402.5,394.75,392,367.5,373.5,361.5,357.5,345,371.25,384.75,399.5,401.75,383,377,358.75,370,352.5,348.5,352.5,351.5,354.5,360,370,376.25,380.25,360.5,358,354.5,337.5,342.25,336.25,349.25,346.75,363,353.75],
+"ALTIN.S1":[87.06,86.24,85.97,84.3,83.42,82.85,82.08,86,88.13,89.3,90.17,88.2,89.25,88.34,90.5,93.86,89.2,89.83,88.74,89.27,86.69,87.6,86.54,85.68,84.79,83.08,83.75,82.79,82.05,81.78,81.8,83.7,82.46,82.68,81.87,82.26,83.25,82.76,82.4,81.93,81.2,82.76,81.83,81.86,80.6,81.41,81.4,81.42,83.88,82.38,81.62,81.84,81.72,80.82,79.55,79.14,80.53,79.61,79.78,80.99,81.65,81.13,80.8,80.04,80.06,80.12,79.15,78.62,77.5,79.87,79.27,80.71,80.37,78.65,78.94,77.85,77.9,77.27,76.5,74.83,72.11,72.1,73.75,77.43,77.4,76.65,75.84,74.67,74,72.53,71.1,70.78,72.32,70.79,70.65,70.88,71.69,72.35,71.03,70.6,69.53,70.18,69.9,68.65,68.42,67.41,66.94,66.17,67.62,70.08,68.5,69.34,69.35,68.49,67.88,68.11,68.04,68.09,67.85,70.3,71.06,72.8],
+THYAO:[329.5,333,331,337,347.75,347.75,345,328.25,312.5,320.5,315.75,308.5,307,311.5,307.5,289,287,287.75,284.25,276.75,282,297,294.75,292.75,292.25,290,294.75,290.75,289.5,295.5,291,294.5,293.5,294,288.75,294.25,298,299.75,296,297.25,292,317,319.5,323.25,316.75,324,319.25,317.25,329,328.25,327,323.5,325,320.5,315.75,314.5,308.25,301.5,301,309.75,312.5,311,308.5,305.75,304,305.75,300,294.5,295,274,288,297.5,296.75,291.5,300,297,299.75,297,297.25,296.75,295.5,293.25,307.75,325.75,326.5,321.75,328.5,326.75,324.75,325,324.75,328.5,330.75,329,326,328.5,333.25,334,347,348.25,332,338.25,344.5,333.5,326,330,329.5,328,317.5,321,312.75,312,318,319,313.25,308.25,314,317,323.75,314,311.25,306.25],
+FROTO:[115.44,112.05,116.21,122.98,124.72,129.84,123.56,119.79,116.79,117.28,116.6,115.63,113.21,114.66,112.05,107.99,104.9,104.22,107.7,104.9,105.29,108.38,107.9,108.28,106.06,105.6,107.9,105.7,109.8,108.9,104.2,104.6,102.7,103.8,100,101.1,102.5,100.7,99.6,100.4,96.7,101.8,102.2,105.3,104.9,106.1,106.8,105.9,109.3,107.5,103.5,102.3,104.5,102.6,99.15,98.05,98,96,98.05,99,98.9,97.5,97,94.1,93.45,93.45,91.45,87.35,86.65,82.35,86.85,87.6,84.15,85.2,88.9,88.95,88.6,86.2,87.1,86.3,87.45,86.55,86.7,90.1,91.3,89.55,91.85,91.1,89.85,87.95,86.45,86.35,86.25,85.45,84.55,85.2,83.7,83.75,82,83,80.8,80.85,81.8,81.55,81.05,84.4,83.6,82.65,81.1,81.45,79.4,79,78.25,77.55,76.1,76.7,80.1,79.05,80.55,80.45,78.6,78.1],
+PGSUS:[209.2,207.8,207,217.5,218.1,224,223,211,202,204.2,203.3,199.7,198.3,202.2,196.5,185.1,181.4,181.8,180.7,177.2,173.6,179.4,180,179,177.3,176.9,179.9,178.5,177.5,181.5,179,180,177.6,177,174.6,175.5,179.4,178.9,176.6,178.4,175,186,185.3,188.4,183.7,187.1,188.3,186,196.9,193.5,190.2,190.2,189.1,186,180.5,179.1,180.6,178.8,178.7,184.3,187.5,186.7,185,179.9,177,178.4,176.6,171.6,173.4,162.9,168.1,172.7,170.1,168.4,172.2,170,171.2,168.6,170,168.9,166.8,165.5,172,181.2,184,180,184.7,183.7,182.5,178.1,177,180.7,180.1,177.1,175.1,176.6,177,174.1,174.8,174.1,166,167.3,170.2,165.4,166,167.7,166.5,164.7,163.3,163,160.4,161.6,161.6,159.7,153.6,148.7,153,156.6,158.9,156.5,154.7,153.5],
+MASFN:{s:"07-30",v:[45.66,45.66,42.84,44.24,43.52,43.5,44.56]},
+METEN:{s:"07-28",v:[22,24.2,21.78,19.61,17.65,18.55,17.79,19.56,19.52]}};
+
+const POS=[
+{k:"TLY",nm:{tr:"Tera Portföy Birinci Serbest Fon",en:"Tera Portföy First Free Fund"},mk:"FON",qty:4.2144,cost:null,px:8333.53,dPct:.67,dTL:233.74,val:35120.71,cur:"TRY",w:36.0},
+{k:"ASELS",nm:{tr:"Aselsan",en:"Aselsan"},mk:"BIST",qty:32,cost:315.15,px:353.75,dPct:-2.55,dTL:-296,val:11320,cur:"TRY",w:11.6,w52:[166.79,450],dayR:[350.5,368.5],wk:3.36,mo:-7.64,yr:97.88,fk:"39,11",pddd:"5,26",pd:"₺1,613 trilyon",dd:"₺306,7 mlr",vol:"₺12,4 mlr",halka:"%25,78"},
+{k:"ALTIN.S1",nm:{tr:"Darphane Altın Sertifikası",en:"Mint Gold Certificate"},mk:"BIST",qty:148,cost:72.08,px:72.8,dPct:2.45,dTL:257.52,val:10774.4,cur:"TRY",w:11.1,w52:[47.22,116.65],dayR:[71.54,74.11],wk:7,mo:3.12,yr:51.7,vol:"₺2,29 mlr"},
+{k:"THYAO",nm:{tr:"Türk Hava Yolları",en:"Turkish Airlines"},mk:"BIST",qty:32,cost:348,px:306.25,dPct:-1.61,dTL:-160,val:9800,cur:"TRY",w:10.0,w52:[262.75,355.5],dayR:[303.25,312.25],wk:-2.47,mo:-12.06,yr:.13,fk:"3,77",pddd:"0,41",pd:"₺422,6 mlr",dd:"₺1.018,5 mlr",vol:"₺19,9 mlr",halka:"%50,34"},
+{k:"FROTO",nm:{tr:"Ford Otosan",en:"Ford Otosan"},mk:"BIST",qty:114,cost:87.34,px:78.1,dPct:-.64,dTL:-57,val:8903.4,cur:"TRY",w:9.1,w52:[75.05,130.91],dayR:[77.05,78.95],wk:-2.5,mo:-5.9,yr:-19.02,fk:"8,25",pddd:"1,53",pd:"₺274,1 mlr",dd:"₺179,2 mlr",vol:"₺1,60 mlr",halka:"%17,69"},
+{k:"MASFN",nm:{tr:"Masfen Enerji · yeni halka arz",en:"Masfen Enerji · recent IPO"},mk:"BIST",qty:81,cost:45.68,px:44.56,dPct:2.44,dTL:85.86,val:3609.36,cur:"TRY",w:3.7,w52:[41.56,50.2],dayR:[43.44,46.88],wk:-2.41,mo:null,yr:null,pd:"₺24,7 mlr",vol:"₺1,49 mlr",halka:"%13,63",ipo:"30.07.2026"},
+{k:"METEN",nm:{tr:"Metgün Enerji · yeni halka arz",en:"Metgün Enerji · recent IPO"},mk:"BIST",qty:95,cost:20,px:19.52,dPct:-.2,dTL:-3.8,val:1854.4,cur:"TRY",w:1.9,w52:[17.45,26.62],dayR:[19.3,20.82],wk:-.46,mo:null,yr:null,pd:"₺12,4 mlr",vol:"₺1,37 mlr",halka:"%15,98",ipo:"28.07.2026"},
+{k:"PGSUS",nm:{tr:"Pegasus",en:"Pegasus Airlines"},mk:"BIST",qty:4,cost:162.3,px:153.5,dPct:-.78,dTL:-4.8,val:614,cur:"TRY",w:.6,w52:[148.4,274.5],dayR:[152.1,155],wk:.33,mo:-11.83,yr:-41.36,fk:"8,90",pddd:"0,66",pd:"₺76,75 mlr",dd:"₺115,7 mlr",vol:"₺1,14 mlr",halka:"%46,29"},
+{k:"ABOS",nm:{tr:"Acumen Pharmaceuticals",en:"Acumen Pharmaceuticals"},mk:"ABD",qty:137,cost:4.35,px:2.36,dPct:3.51,dTL:10.96,val:323.32,cur:"USD",w:.3},
+{k:"MOND",nm:{tr:"Mondee Holdings",en:"Mondee Holdings"},mk:"ABD",qty:1,cost:4.43,px:.0001,dPct:0,dTL:0,val:0,cur:"USD",w:0}];
+
+const HIST_RAW="02-09|3482|2915 02-10|3450|2915 02-11|3439|2915 02-12|3372|2915 02-13|3337|2915 02-16|3314|2915 02-17|3283|2915 02-18|3440|2915 02-19|3525|2915 02-20|3572|2915 02-23|3607|2915 02-24|3528|2915 02-25|3570|2915 02-26|3534|2915 02-27|10060|9095 03-02|10554|9095 03-03|10013|9095 03-04|10253|9095 03-05|10450|9095 03-06|10241|9095 03-09|13676|12998 03-10|14200|12998 03-11|14206|12998 03-12|13987|12998 03-13|13704|12998 03-16|13579|12998 03-17|14270|12998 03-18|14472|12998 03-19|14122|12998 03-23|14575|12998 03-24|14536|12998 03-25|14148|12998 03-26|14114|12998 03-27|13891|12998 03-30|13531|12998 03-31|13538|12998 04-01|13578|12998 04-02|14078|12998 04-03|13872|12998 04-06|14061|12998 04-07|14192|12998 04-08|14902|12998 04-09|15329|12998 04-10|16026|12998 04-13|16512|12998 04-14|16432|12998 04-15|16592|12998 04-16|16409|12998 04-17|16603|12998 04-20|16389|12998 04-21|16003|12998 04-22|16011|12998 04-24|15865|12998 04-27|16569|12998 04-28|16505|12998 04-29|16833|12998 04-30|16714|12998 05-04|17040|12998 05-05|16863|12998 05-06|17127|12998 05-07|16965|12998 05-08|16957|12998 05-11|17048|12998 05-12|16618|12998 05-13|16410|12998 05-14|16501|12998 05-15|16446|12998 05-18|16009|12998 05-20|15692|12998 05-21|15283|12998 05-22|16291|12998 05-25|16084|12998 05-26|15383|12998 06-01|15434|12998 06-02|16206|12998 06-03|15386|12998 06-04|14708|12998 06-05|14707|12998 06-08|14836|12998 06-09|23205|21930 06-10|23830|21930 06-11|23771|21930 06-12|23648|21930 06-15|24286|21930 06-16|24989|21930 06-17|24814|21930 06-18|25514|21930 06-19|25126|21930 06-22|24725|21930 06-23|24385|21930 06-24|23391|21930 06-25|23560|21930 06-26|23230|21930 06-29|22958|21930 06-30|22462|21930 07-01|23377|21930 07-02|23693|21930 07-03|24198|21930 07-06|43902|41930 07-07|43394|41930 07-08|42270|41930 07-09|41988|41930 07-10|42534|41849 07-13|41409|41849 07-14|40950|41849 07-16|41438|41849 07-17|41230|41849 07-20|41055|41849 07-21|40933|41849 07-22|41769|41849 07-23|41238|41849 07-24|41420|41849 07-27|40896|41849 07-28|43370|44398 07-29|43003|44398 07-30|45850|48098 07-31|46375|48098 08-03|45766|48098 08-04|46742|48098 08-05|46561|48098 08-06|47054|48098 08-07|46876|48098";
+const HIST=HIST_RAW.split(" ").map(x=>{const[d,v,c]=x.split("|");return{d,v:+v,c:+c}});
+HIST.forEach((h,i)=>{h.pl=h.v-h.c;h.plPct=h.pl/h.c*100;const p=HIST[i-1];const inf=p?h.c-p.c:0;
+  h.chg=p?h.v-p.v-inf:0;h.chgPct=p?h.chg/(p.v+inf)*100:0;h.inflow=inf});
+const H_LAST=HIST[HIST.length-1];
+
+const TLY={price:8333.53,dPct:.67,fundSize:"₺251,3 milyar",investors:"99.770",mgmtFee:"%2,00",stopaj:"%17,50",
+ risk:7,alis:1,satis:2,vol:"%20,10",share:"%4,04",report:{tr:"3 Ağustos 2026 · Temmuz 2026 raporu",en:"3 Aug 2026 · July 2026 report"},
+ ret:{wk:5.72,mo:14.81,m6:143.96,ytd:181,yr:912.98},
+ alloc:[{n:{tr:"Hisse senedi",en:"Equities"},v:78.63},{n:{tr:"Ters-repo",en:"Reverse repo"},v:14.02},
+  {n:{tr:"Repo (borçlanma)",en:"Repo (borrowing)"},v:-9.33},{n:{tr:"Özel sektör kira sert.",en:"Corp. lease certs."},v:5.06},
+  {n:{tr:"Yatırım fonu payı",en:"Fund units"},v:4.79},{n:{tr:"Kalanlar",en:"Others"},v:5.76}],
+ top:[{k:"OZATD",nm:{tr:"Özata Denizcilik",en:"Özata Denizcilik"},w:34.27,chg:19.97,x:"₺4.480,00 · yıllık +%1.774,48 · aylık +%145,08 · PD/DD 71,16 · 52h ₺151,00–₺4.660,00"},
+  {k:"DSTKF",nm:{tr:"Destek Finans Faktoring",en:"Destek Finans Faktoring"},w:12.02,chg:-10.83,x:null},
+  {k:"TEHOL",nm:{tr:"Tera Yatırım Tek. Holding",en:"Tera Yatırım Tech Holding"},w:9.22,chg:2.08,x:"₺49,70 · yıllık +%449,70 · F/K 25,03 · PD/DD 10,74 · TLY fonu bu şirketin %22,70'ine sahip"},
+  {k:"PEKGY",nm:{tr:"Peker GMYO",en:"Peker REIT"},w:8.76,chg:1.03,x:null},
+  {k:"TERA",nm:{tr:"Tera Yatırım",en:"Tera Yatırım"},w:4.11,chg:-2.52,x:null},
+  {k:"TRHOL",nm:{tr:"—",en:"—"},w:4.01,chg:-1.6,x:null},
+  {k:"ALKLC",nm:{tr:"—",en:"—"},w:1.92,chg:1.38,x:null},
+  {k:"BIGEN",nm:{tr:"—",en:"—"},w:1.55,chg:1.55,x:null},
+  {k:"DAPGM",nm:{tr:"—",en:"—"},w:.05,chg:-.02,x:null}]};
+
+const L={tr:{mk:"Piyasa",pos:"Pozisyon",qty:"Adet",px:"Fiyat",cst:"Maliyet",val:"Değer",w:"Ağırlık",pl:"K/Z",plp:"K/Z %",day:"Günlük",dayp:"Günlük %",tot:"TOPLAM",unk:"bilinmiyor",bist:"BIST toplam",us:"ABD toplam"},
+ en:{mk:"Market",pos:"Position",qty:"Qty",px:"Price",cst:"Cost",val:"Value",w:"Weight",pl:"P&L",plp:"P&L %",day:"Today",dayp:"Today %",tot:"TOTAL",unk:"unknown",bist:"BIST total",us:"US total"}};
+
+let lang="tr";
+const nf=(v,d=2)=>{if(v==null)return"—";const s=Math.abs(v).toFixed(d);let[i,f]=s.split(".");
+ i=i.replace(/\B(?=(\d{3})+(?!\d))/g,lang==="tr"?".":",");return(v<0?"-":"")+i+(f?(lang==="tr"?",":".")+f:"")};
+const mn=(v,c,d=2)=>(c==="USD"?"$":"₺")+nf(v,d);
+const pc=v=>v==null?"—":(lang==="tr"?(v<0?"-":"+")+"%"+nf(Math.abs(v)):(v<0?"-":"+")+nf(Math.abs(v))+"%");
+const cl=v=>v>0?"pos":v<0?"neg":"neu";
+const bistCost=()=>POS.filter(p=>p.mk==="BIST").reduce((a,p)=>a+p.qty*p.cost,0);
+const bistVal=()=>POS.filter(p=>p.mk==="BIST").reduce((a,p)=>a+p.val,0);
+const usCost=()=>POS.filter(p=>p.mk==="ABD").reduce((a,p)=>a+p.qty*p.cost,0);
+const usVal=()=>POS.filter(p=>p.mk==="ABD").reduce((a,p)=>a+p.val,0);
+const bistDay=()=>POS.filter(p=>p.mk==="BIST").reduce((a,p)=>a+p.dTL,0);
+
+// ===== Kullanıcı işlemleri (localStorage) =====
+// POS_BASE = zamanlanmış görevin çektiği temel veri. TX = senin girdiğin alım/satımlar.
+// Efektif pozisyonlar her render'da POS_BASE + TX'ten yeniden hesaplanır.
+const POS_BASE=JSON.parse(JSON.stringify(POS));
+let TX=[];
+try{TX=JSON.parse(localStorage.getItem("pfTX")||"[]")}catch(e){TX=[]}
+function saveTXStore(){try{localStorage.setItem("pfTX",JSON.stringify(TX))}catch(e){}}
+
+let GAIN=null,LOSE=null,TOTAL_TRY=0;
+
+function applyTX(){
+ const m=new Map();
+ POS_BASE.forEach(p=>m.set(p.k,JSON.parse(JSON.stringify(p))));
+ [...TX].sort((a,b)=>(a.d||"").localeCompare(b.d||"")).forEach(t=>{
+  let p=m.get(t.k);
+  if(!p){ // panelde olmayan yeni hisse
+   p={k:t.k,nm:{tr:t.k+" · fiyat verisi bekleniyor",en:t.k+" · awaiting price data"},
+      mk:"BIST",qty:0,cost:0,px:t.p,dPct:0,dTL:0,val:0,cur:"TRY",w:0,isNew:true};
+   m.set(t.k,p);
+  }
+  const q=+t.q,pr=+t.p;
+  if(t.s==="B"){
+   const nq=p.qty+q;
+   p.cost = nq>0 ? ((p.qty*(p.cost||0))+q*pr)/nq : pr;
+   p.qty=nq;
+  }else{
+   p.qty=Math.max(0,p.qty-q); // ortalama maliyet yöntemi: satışta maliyet değişmez
+  }
+  p.touched=true;
+ });
+ const arr=[...m.values()].filter(p=>p.qty>0||p.k==="TLY");
+ arr.forEach(p=>{
+  p.val=p.qty*p.px;
+  // günlük TL değişimi yeni adede göre ölçekle
+  if(p.dPct&&p.px){const prev=p.px/(1+p.dPct/100);p.dTL=p.qty*(p.px-prev);}
+ });
+ TOTAL_TRY=arr.reduce((a,p)=>a+(p.cur==="USD"?p.val*USDTRY:p.val),0);
+ arr.forEach(p=>p.w=TOTAL_TRY?((p.cur==="USD"?p.val*USDTRY:p.val)/TOTAL_TRY*100):0);
+ arr.sort((a,b)=>b.w-a.w);
+ POS.length=0;POS.push(...arr);
+ const mv=POS.filter(p=>p.dPct!==0);
+ GAIN=mv.length?mv.reduce((a,b)=>b.dPct>a.dPct?b:a):null;
+ LOSE=mv.length?mv.reduce((a,b)=>b.dPct<a.dPct?b:a):null;
+}
+
+// ---- Pencere ----
+let txSide="B";
+function openTx(){
+ document.getElementById("txOv").classList.add("on");
+ const d=document.getElementById("txD");if(!d.value)d.value=new Date().toISOString().slice(0,10);
+ document.getElementById("txList").innerHTML=POS_BASE.map(p=>`<option value="${p.k}">`).join("");
+ document.getElementById("txErr").textContent="";
+ document.getElementById("txCopyMsg").textContent="";
+ renderTxRows();
+}
+function closeTx(){document.getElementById("txOv").classList.remove("on");}
+function setSide(s){txSide=s;
+ document.getElementById("sgB").classList.toggle("on",s==="B");
+ document.getElementById("sgS").classList.toggle("on",s==="S");}
+
+function saveTx(){
+ const t=lang==="tr",e=document.getElementById("txErr");
+ const k=document.getElementById("txK").value.trim().toUpperCase();
+ const q=parseFloat(document.getElementById("txQ").value);
+ const p=parseFloat(document.getElementById("txP").value);
+ const d=document.getElementById("txD").value;
+ if(!k){e.textContent=t?"Hisse kodu boş olamaz.":"Ticker is required.";return}
+ if(!(q>0)){e.textContent=t?"Adet sıfırdan büyük olmalı.":"Quantity must be greater than zero.";return}
+ if(!(p>0)){e.textContent=t?"Fiyat sıfırdan büyük olmalı.":"Price must be greater than zero.";return}
+ if(!d){e.textContent=t?"Tarih seç.":"Pick a date.";return}
+ if(txSide==="S"){
+  const cur=POS.find(x=>x.k===k);
+  if(!cur||cur.qty<q){e.textContent=t
+   ?`Elinde ${cur?nf(cur.qty,0):0} adet ${k} görünüyor, ${nf(q,0)} adet satamazsın.`
+   :`You appear to hold ${cur?nf(cur.qty,0):0} ${k}, cannot sell ${nf(q,0)}.`;return}
+ }
+ TX.push({k,s:txSide,q,p,d,ts:Date.now()});
+ saveTXStore();
+ document.getElementById("txK").value="";
+ document.getElementById("txQ").value="";
+ document.getElementById("txP").value="";
+ e.textContent="";
+ render();renderTxRows();
+}
+function delTx(i){TX.splice(i,1);saveTXStore();render();renderTxRows();}
+function renderTxRows(){
+ const t=lang==="tr",w=document.getElementById("txRows");
+ if(!TX.length){w.innerHTML=`<p class="hint" style="margin:0">${t?"Henüz işlem girmedin.":"No trades entered yet."}</p>`;return}
+ w.innerHTML=[...TX].map((x,i)=>({x,i})).sort((a,b)=>b.x.ts-a.x.ts).map(({x,i})=>
+  `<div class="tx-row"><span class="tag ${x.s==="B"?"b":"s"}">${x.s==="B"?(t?"ALIŞ":"BUY"):(t?"SATIŞ":"SELL")}</span>
+   <span class="sym">${x.k}</span>
+   <span class="sub">${nf(x.q,0)} × ₺${nf(x.p)}</span>
+   <span class="sub" style="margin-left:auto">${x.d}</span>
+   <button class="del" onclick="delTx(${i})" title="${t?"Sil":"Delete"}">&times;</button></div>`).join("");
+}
+function copyTx(){
+ const t=lang==="tr",m=document.getElementById("txCopyMsg");
+ if(!TX.length){m.textContent=t?"Kopyalanacak işlem yok.":"No trades to copy.";return}
+ const lines=[...TX].sort((a,b)=>(a.d||"").localeCompare(b.d||"")).map(x=>
+  `${x.d} · ${x.s==="B"?"ALIŞ":"SATIŞ"} · ${x.k} · ${x.q} adet · ₺${x.p}`);
+ const txt=(t?"Portföyüme şu işlemleri ekledim, paneli ve analizleri buna göre güncelle:\n":"I've entered these trades, please update the panel and analysis:\n")+lines.join("\n");
+ const done=()=>{m.style.color="var(--pos)";m.textContent=t
+  ?"Kopyalandı. Sohbete yapıştırıp gönder — temel veriye işleyip zamanlanmış göreve de ekleyeceğim."
+  :"Copied. Paste it into the chat — I'll fold it into the base data and the scheduled task.";};
+ if(navigator.clipboard&&navigator.clipboard.writeText){
+  navigator.clipboard.writeText(txt).then(done).catch(()=>{fallback()});
+ }else fallback();
+ function fallback(){
+  const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand("copy");done();}catch(e){
+   m.style.color="var(--wr)";m.textContent=(t?"Kopyalanamadı, elle al: ":"Copy failed, take it manually: ")+txt;}
+  document.body.removeChild(ta);
+ }
+}
+// BIST geneli — doviz.com 08.08.2026 kapanışı
+const MKT={gain:[["GIPTA",67.65,10.00],["EMPAE",73.70,10.00],["MRSHL",1707.00,9.99],["KARCL",50.70,9.98],["CRFSA",210.50,9.98]],
+ lose:[["LIDER",57.60,-10.00],["SURGY",51.80,-9.99],["CRDFA",30.64,-9.99],["ORZAX",96.70,-9.96],["BARMA",14.84,-9.95]],
+ vol:[["THYAO",306.25,"₺19,9 mlr"],["ASELS",353.75,"₺12,4 mlr"],["CWENE",42.20,"₺12,2 mlr"],["EREGL",38.68,"₺12,1 mlr"],["TUPRS",323.50,"₺11,8 mlr"]]};
+
+function kpiTop(){
+ const bc=bistCost(),bv=bistVal(),uc=usCost(),uv=usVal(),bd=bistDay();
+ const t=lang==="tr";
+ const tly=POS.find(p=>p.k==="TLY");
+ const ud=POS.filter(p=>p.mk==="ABD").reduce((a,p)=>a+p.dTL,0);
+ const bPrev=bv-bd,uPrev=uv-ud;
+ let h=`
+ <div class="kpi"><div class="l">${t?"BIST hisseleri":"BIST stocks"}</div><div class="v">₺${nf(bv)}</div>
+  <div class="s ${cl(bv-bc)}">${t?"Tümü":"Total"}: ${mn(bv-bc,"TRY")} (${pc(bc?(bv-bc)/bc*100:0)})</div>
+  <div class="s2 ${cl(bd)}">${t?"Günlük":"Today"}: ${bd>0?"+":""}₺${nf(Math.abs(bd))} (${pc(bPrev?bd/bPrev*100:0)})</div></div>`;
+ if(tly)h+=`
+ <div class="kpi"><div class="l">${t?"TLY fonu":"TLY fund"}</div><div class="v">₺${nf(tly.val)}</div>
+  <div class="s neu">${t?"Tümü: maliyet bilinmiyor":"Total: cost basis unknown"}</div>
+  <div class="s2 ${cl(tly.dTL)}">${t?"Günlük":"Today"}: ${tly.dTL>0?"+":""}₺${nf(Math.abs(tly.dTL))} (${pc(tly.dPct)})</div></div>`;
+ if(uv>0||uc>0)h+=`
+ <div class="kpi"><div class="l">${t?"ABD hisseleri":"US stocks"}</div><div class="v">$${nf(uv)}</div>
+  <div class="s ${cl(uv-uc)}">${t?"Tümü":"Total"}: ${mn(uv-uc,"USD")} (${pc(uc?(uv-uc)/uc*100:0)})</div>
+  <div class="s2 ${cl(ud)}">${t?"Günlük":"Today"}: ${ud>0?"+":""}$${nf(Math.abs(ud))} (${pc(uPrev?ud/uPrev*100:0)})</div></div>`;
+ document.getElementById("kpiTop").innerHTML=h;
+}
+
+function kpiPL(){
+ const t=lang==="tr",bc=bistCost(),bv=bistVal();
+ document.getElementById("kpiPL").innerHTML=`
+ <div class="kpi"><div class="l">${t?"Yatırılan sermaye":"Capital invested"}</div><div class="v">₺${nf(48095,0)}</div>
+  <div class="s neu">${t?"Eki 2025 – 30 Tem 2026":"Oct 2025 – 30 Jul 2026"}</div></div>
+ <div class="kpi"><div class="l">${t?"BIST bugünkü değer":"BIST current value"}</div><div class="v">₺${nf(bv)}</div>
+  <div class="s ${cl(bv-bc)}">${mn(bv-bc,"TRY")} (${pc((bv-bc)/bc*100)})</div></div>
+ <div class="kpi"><div class="l">${t?"Günün en çok kazandıranı":"Today's biggest gainer"}</div>
+  <div class="v pos">${GAIN.k}</div>
+  <div class="s pos">${pc(GAIN.dPct)} · ${GAIN.dTL>0?"+":""}${mn(GAIN.dTL,GAIN.cur)}</div>
+  <div class="s2">${GAIN.nm[lang]}</div></div>
+ <div class="kpi"><div class="l">${t?"Günün en çok kaybettireni":"Today's biggest loser"}</div>
+  <div class="v neg">${LOSE.k}</div>
+  <div class="s neg">${pc(LOSE.dPct)} · ${mn(LOSE.dTL,LOSE.cur)}</div>
+  <div class="s2">${LOSE.nm[lang]}</div></div>`;
+}
+
+function kpiTLY(){
+ const t=lang==="tr";
+ document.getElementById("kpiTLY").innerHTML=`
+ <div class="kpi"><div class="l">${t?"Senin pozisyonun":"Your position"}</div><div class="v">₺${nf(35120.71)}</div>
+  <div class="s pos">${t?"Günlük":"Today"}: +₺${nf(233.74)} (${pc(.67)})</div>
+  <div class="s2">${t?"4,2144 birim · ₺8.333,53":"4.2144 units · ₺8,333.53"}</div></div>
+ <div class="kpi"><div class="l">${t?"SPK risk değeri":"Risk score"}</div><div class="v neg">${TLY.risk} / 7</div>
+  <div class="s neg">${t?"en yüksek kategori":"highest category"}</div>
+  <div class="s2">${t?"volatilite":"volatility"} ${TLY.vol}</div></div>
+ <div class="kpi"><div class="l">${t?"Yönetim ücreti":"Management fee"}</div><div class="v">${TLY.mgmtFee}</div>
+  <div class="s neu">${t?"yıllık · stopaj":"annual · withholding"} ${TLY.stopaj}</div>
+  <div class="s2">${t?"satış valörü":"redemption"} T+${TLY.satis}</div></div>
+ <div class="kpi"><div class="l">${t?"Fon büyüklüğü":"Fund size"}</div><div class="v">${TLY.fundSize}</div>
+  <div class="s neu">${TLY.investors} ${t?"yatırımcı":"investors"}</div>
+  <div class="s2">${t?"pazar payı":"market share"} ${TLY.share}</div></div>`;
+}
+
+// ===== Faktör sinyali: her faktör gerçek veriden +1 / 0 / -1 =====
+// f: [faktör adı, işaret, gerekçe]  işaret: 1 olumlu, 0 nötr, -1 olumsuz
+const SIG={
+ ASELS:{tr:[["Değerleme",-1,"F/K 39,11 · PD/DD 5,26 — portföyünün en pahalı hissesi"],
+   ["Momentum",-1,"aylık -%7,64 — bilanço sonrası geri çekilme"],
+   ["52h konum",1,"aralığın %66'sı · dipten +%112 — yükseliş trendi sağlam"],
+   ["Haber akışı",1,"ilk yarı kâr +%71 · Nis-Tem ~1,7 mlr $ + 1,47 mlr € sözleşme"],
+   ["Uzun vade",1,"yıllık +%97,88"]],
+  en:[["Valuation",-1,"P/E 39.11 · P/B 5.26 — your most expensive holding"],
+   ["Momentum",-1,"-7.64% monthly — pullback after results"],
+   ["52w position",1,"66% of range · +112% off low — uptrend intact"],
+   ["News flow",1,"H1 profit +71% · ~$1.7bn + €1.47bn contracts Apr-Jul"],
+   ["Long term",1,"+97.88% yearly"]]},
+ "ALTIN.S1":{tr:[["Değerleme",0,"emtia sertifikası — F/K, PD/DD uygulanmaz"],
+   ["Momentum",1,"aylık +%3,12 · haftalık +%7,00 — portföyün en hızlısı"],
+   ["52h konum",0,"aralığın %36,8'i — orta-alt bölge"],
+   ["Haber akışı",1,"gram altın +%2,59 · bankalar ons hedefini 5.300 $'a çekti"],
+   ["Uzun vade",1,"yıllık +%51,70"]],
+  en:[["Valuation",0,"commodity certificate — P/E and P/B don't apply"],
+   ["Momentum",1,"+3.12% monthly · +7.00% weekly — your fastest riser"],
+   ["52w position",0,"36.8% of range — lower-middle zone"],
+   ["News flow",1,"gram gold +2.59% · banks raised ounce targets to $5,300"],
+   ["Long term",1,"+51.70% yearly"]]},
+ THYAO:{tr:[["Değerleme",1,"F/K 3,77 · PD/DD 0,41 — defter değerinin %41'i"],
+   ["Momentum",-1,"aylık -%12,06 — HSBC raporu sonrası sert düşüş"],
+   ["52h konum",0,"aralığın %46,9'u — tam orta"],
+   ["Haber akışı",-1,"trafik verisi iyi ama HSBC negatif · AJet %30 indirim (yield baskısı)"],
+   ["Uzun vade",0,"yıllık +%0,13 — bir yılda net olarak yerinde saymış"]],
+  en:[["Valuation",1,"P/E 3.77 · P/B 0.41 — 41% of book value"],
+   ["Momentum",-1,"-12.06% monthly — sharp drop after the HSBC report"],
+   ["52w position",0,"46.9% of range — mid-range"],
+   ["News flow",-1,"good traffic data but HSBC negative · AJet 30% discount (yield pressure)"],
+   ["Long term",0,"+0.13% yearly — flat over a full year"]]},
+ FROTO:{tr:[["Değerleme",0,"F/K 8,25 · PD/DD 1,53 — makul, ucuz değil"],
+   ["Momentum",-1,"aylık -%5,90 · haftalık -%2,50"],
+   ["52h konum",-1,"aralığın %5,5'i — neredeyse tam dipte, zirveden -%40,3"],
+   ["Haber akışı",-1,"temmuzda otomotiv pazarı -%25 · HSBC \"Al\"dan \"Tut\"a indirdi"],
+   ["Uzun vade",-1,"yıllık -%19,02"]],
+  en:[["Valuation",0,"P/E 8.25 · P/B 1.53 — reasonable, not cheap"],
+   ["Momentum",-1,"-5.90% monthly · -2.50% weekly"],
+   ["52w position",-1,"5.5% of range — near the low, -40.3% from high"],
+   ["News flow",-1,"July auto market -25% · HSBC cut from Buy to Hold"],
+   ["Long term",-1,"-19.02% yearly"]]},
+ PGSUS:{tr:[["Değerleme",1,"F/K 8,90 · PD/DD 0,66 — defter değerinin altında"],
+   ["Momentum",-1,"aylık -%11,83 — THYAO ile neredeyse birebir aynı"],
+   ["52h konum",-1,"aralığın %4,0'ı — portföyünün en dipteki pozisyonu"],
+   ["Haber akışı",-1,"9 euroluk bilet kampanyası (yield baskısı) · HSBC havacılıkta negatif"],
+   ["Uzun vade",-1,"yıllık -%41,36"]],
+  en:[["Valuation",1,"P/E 8.90 · P/B 0.66 — below book value"],
+   ["Momentum",-1,"-11.83% monthly — nearly identical to THYAO"],
+   ["52w position",-1,"4.0% of range — the most depressed position you hold"],
+   ["News flow",-1,"€9 fare campaign (yield pressure) · HSBC negative on aviation"],
+   ["Long term",-1,"-41.36% yearly"]]},
+ MASFN:{tr:[["Değerleme",0,"F/K, PD/DD, defter değeri yayımlanmamış — yeni halka arz"],
+   ["Momentum",0,"7 işlem günü — momentum ölçülemez"],
+   ["52h konum",0,"7 günlük aralık istatistiksel olarak anlamsız"],
+   ["Haber akışı",0,"şirkete özel haber bulunamadı"],
+   ["Uzun vade",0,"geçmiş yok"]],
+  en:[["Valuation",0,"no published P/E, P/B or book value — recent IPO"],
+   ["Momentum",0,"7 sessions — momentum cannot be measured"],
+   ["52w position",0,"a 7-day range is statistically meaningless"],
+   ["News flow",0,"no company-specific news found"],
+   ["Long term",0,"no history"]]},
+ METEN:{tr:[["Değerleme",0,"F/K, PD/DD, defter değeri yayımlanmamış — yeni halka arz"],
+   ["Momentum",0,"9 işlem günü — momentum ölçülemez"],
+   ["52h konum",0,"9 günde %27'lik bant — anlamlı okuma yapılamaz"],
+   ["Haber akışı",0,"şirkete özel haber bulunamadı"],
+   ["Uzun vade",0,"geçmiş yok"]],
+  en:[["Valuation",0,"no published P/E, P/B or book value — recent IPO"],
+   ["Momentum",0,"9 sessions — momentum cannot be measured"],
+   ["52w position",0,"a 27% band in 9 days — no meaningful reading"],
+   ["News flow",0,"no company-specific news found"],
+   ["Long term",0,"no history"]]},
+ TLY:{tr:[["Risk seviyesi",-1,"SPK risk değeri 7/7 — en yüksek kategori"],
+   ["Yoğunlaşma",-1,"fonun %34,27'si tek hissede (OZATD, PD/DD 71,16)"],
+   ["Yapı",-1,"%13'ü yönetim şirketiyle aynı gruba bağlı şirketlerde · repo ile kaldıraç"],
+   ["Getiri",1,"aylık +%16,41 · 6 aylık +%143,96"],
+   ["Portföy rolü",-1,"tek başına portföyün %36'sı — çeşitlendirme değil yoğunlaşma"]],
+  en:[["Risk level",-1,"regulator risk score 7/7 — highest category"],
+   ["Concentration",-1,"34.27% of the fund in one stock (OZATD, P/B 71.16)"],
+   ["Structure",-1,"13% in the manager's own group companies · leveraged via repo"],
+   ["Return",1,"+16.41% monthly · +143.96% over 6 months"],
+   ["Portfolio role",-1,"36% of your portfolio alone — concentration, not diversification"]]},
+ ABOS:{tr:[["Değerleme",0,"kâr etmeyen biyoteknoloji — F/K uygulanmaz"],
+   ["Momentum",1,"günlük +%3,51"],
+   ["Pozisyon",-1,"maliyetin %45,74 altında"],
+   ["Geçmiş",-1,"mart ayında iki çıkış denemesi de gerçekleşmedi, sonrasında %51 daha düştü"],
+   ["Portföy rolü",-1,"portföyün %0,3'ü — anlamlı çeşitlendirme sağlamıyor"]],
+  en:[["Valuation",0,"pre-profit biotech — P/E doesn't apply"],
+   ["Momentum",1,"+3.51% today"],
+   ["Position",-1,"45.74% below cost"],
+   ["History",-1,"two March exit attempts both failed, fell another 51% after"],
+   ["Portfolio role",-1,"0.3% of portfolio — provides no meaningful diversification"]]},
+ MOND:{tr:[["Fiyat",-1,"hisse başına 0,0001 $ — fiilen değersiz"],
+   ["Pozisyon",-1,"maliyetin %100 altında"],
+   ["Likidite",-1,"bu fiyat seviyesindeki hisseler genelde kotasyon kriterlerini kaybetmiştir"],
+   ["Haber akışı",0,"haber bulunamadı"],
+   ["Portföy rolü",-1,"₺0 değer — portföy ekranında yer kaplamaktan başka işlevi yok"]],
+  en:[["Price",-1,"$0.0001 per share — effectively worthless"],
+   ["Position",-1,"100% below cost"],
+   ["Liquidity",-1,"stocks at this level have typically lost listing compliance"],
+   ["News flow",0,"no news found"],
+   ["Portfolio role",-1,"₺0 value — occupies a line and nothing more"]]}};
+
+function signals(){
+ const t=lang==="tr";
+ document.getElementById("signals").innerHTML=POS.map(p=>{
+  const f=(SIG[p.k]||{})[lang];if(!f)return"";
+  const up=f.filter(x=>x[1]===1).length,nu=f.filter(x=>x[1]===0).length,dn=f.filter(x=>x[1]===-1).length;
+  const tot=f.length;
+  const pU=Math.round(up/tot*100),pN=Math.round(nu/tot*100),pD=Math.round(dn/tot*100);
+  const verdict = nu===tot ? (t?"DEĞERLENDİRİLEMEZ":"CANNOT ASSESS")
+    : dn>=4 ? (t?"AĞIRLIKLI OLUMSUZ":"MOSTLY NEGATIVE")
+    : up>=3 ? (t?"AĞIRLIKLI OLUMLU":"MOSTLY POSITIVE")
+    : (t?"KARIŞIK":"MIXED");
+  const vc = nu===tot?"fl":dn>=4?"dn":up>=3?"up":"fl";
+  return `<div class="stk" style="margin-bottom:12px">
+   <div class="sk-h"><div class="sk-n">${p.k} <span class="sub">${p.nm[lang]} · ${t?"ağırlık":"weight"} %${nf(p.w,1)}</span></div>
+    <div class="sk-p"><span class="chip ${vc}">${verdict}</span></div></div>
+   <div style="display:flex;height:9px;border-radius:5px;overflow:hidden;margin:11px 0 7px;background:var(--s3)">
+    <div style="width:${pU}%;background:var(--pos)"></div><div style="width:${pN}%;background:var(--dm)"></div><div style="width:${pD}%;background:var(--neg)"></div></div>
+   <div style="display:flex;gap:14px;font-size:11.5px;font-weight:650;margin-bottom:11px">
+    <span class="pos">${t?"Olumlu":"Positive"} %${pU}</span><span class="neu">${t?"Nötr":"Neutral"} %${pN}</span><span class="neg">${t?"Olumsuz":"Negative"} %${pD}</span>
+    <span class="sub" style="margin-left:auto">${up}↑ ${nu}– ${dn}↓ / ${tot}</span></div>
+   <table class="t"><tbody>${f.map(([n,s,r])=>
+    `<tr><td style="width:26%"><span class="sym" style="font-size:11.5px">${n}</span></td>
+     <td style="width:8%;text-align:center" class="${s===1?"pos":s===-1?"neg":"neu"}">${s===1?"▲":s===-1?"▼":"■"}</td>
+     <td style="text-align:left;font-size:11.5px;color:#a8b3c0">${r}</td></tr>`).join("")}</tbody></table></div>`}).join("");
+}
+
+// ===== Tarama sonucu öne çıkan 5 hisse — tüm veri doviz.com 08.08.2026 kapanışı =====
+const CAND=[
+ {k:"TUPRS",px:323.50,fk:"8,57",pddd:"1,37",wk:9.57,mo:25.39,yr:113.15,pos:95.4,fl:48.58,pd:"₺623,3 mlr",w52:[147.06,332.00],risk:4,
+  tr:{nm:"Tüpraş",sec:"Rafineri",pts:[
+   "<b>Taramanın en yüksek skorlu ismi ve tek kurumsal onaylı adayı.</b> İş Yatırım model portföyünü güncellerken Tüpraş'ı listeye <b>dahil etti</b> — bu, bu taramada bulabildiğim tek somut kurumsal alım kararı. Model portföye girmek, kurumun kendi müşterilerine önerdiği sepette yer almak demektir ve genelde kurumsal para akışını tetikler.",
+   "<b>Operasyonel veriler bu kararı destekliyor.</b> 2026 ilk çeyreğinde net rafineri marjı 9,4 dolara <b>ikiye katlandı</b>, satış gelirleri 258 milyar TL ile beklentiyi aştı, net kâr 3,7 milyar TL. Rafineri işinde marj her şeydir; ham petrol ile ürün arasındaki fark genişlediğinde kârlılık orantısız artar.",
+   "<b>Fitch not görünümünü yükseltti</b> (BB- seviyesinde). Kredi derecelendirme görünümünün yukarı revize edilmesi, borçlanma maliyetini düşürür ve yabancı kurumsal yatırımcı için giriş engelini azaltır.",
+   "<b>Değerleme hâlâ makul:</b> F/K 8,57 — yıllık +%113 yükselişe rağmen çarpan şişmemiş. Bu, fiyat artışının kâr artışıyla desteklendiği anlamına geliyor; saf spekülatif bir hareket değil.",
+   "<b>Portföyünle ilişkisi:</b> Rafineri, portföyünde hiç bulunmayan bir alan. Ayrıca ilginç bir bağlantı var — Koç Holding mart ayında Tüpraş'taki %2,1'lik payını 9,32 milyar TL'ye sattı, yani KCHOL ile aynı ekosistemde."],
+   risk:"52 haftalık aralığın <b>%95,4'ünde</b>, yani zirveye çok yakın. Yıllık +%113 ve aylık +%25'ten sonra geri çekilme riski yüksek. Rafineri marjları emtia döngüsüne bağlıdır ve hızlı daralabilir; Brent 82 dolarda yatay seyrediyor. Bu isim, portföyüne ekleyeceğin en yüksek momentumlu ama aynı zamanda en 'geç kalınmış olabilir' pozisyon."},
+  en:{nm:"Tüpraş",sec:"Refining",pts:[
+   "<b>Highest-scoring name in the screen and the only one with institutional endorsement.</b> İş Yatırım <b>added</b> Tüpraş to its model portfolio in a recent update — the only concrete institutional buy decision I could find in this screen. Model-portfolio inclusion means a house recommends it to its own clients and typically triggers institutional flows.",
+   "<b>Operating data supports it.</b> In Q1 2026 the net refining margin <b>doubled</b> to $9.4, sales revenue of ₺258bn beat expectations, and net profit was ₺3.7bn. In refining, margin is everything; when the crude-to-product spread widens, profitability rises disproportionately.",
+   "<b>Fitch raised its outlook</b> (at BB-). An upward revision to the credit outlook lowers borrowing costs and reduces the entry barrier for foreign institutional investors.",
+   "<b>Valuation is still reasonable:</b> P/E 8.57 — the multiple hasn't inflated despite a +113% year. That means the price rise is backed by earnings growth, not pure speculation.",
+   "<b>Relation to your portfolio:</b> Refining is entirely absent from your holdings. There's also an interesting link — Koç Holding sold its 2.1% Tüpraş stake for ₺9.32bn in March, so it sits in the same ecosystem as KCHOL."],
+   risk:"At <b>95.4% of its 52-week range</b>, very close to the high. After +113% for the year and +25% for the month, pullback risk is elevated. Refining margins follow the commodity cycle and can compress quickly; Brent is flat at $82. This would be the highest-momentum but also the most 'possibly late' addition to your portfolio."}},
+
+ {k:"KCHOL",px:198.50,fk:"13,25",pddd:"0,64",wk:0.81,mo:4.92,yr:12.46,pos:72.1,fl:26.32,pd:"₺503,4 mlr",w52:[140.74,220.84],risk:3,
+  tr:{nm:"Koç Holding",sec:"Çeşitlendirilmiş holding",pts:[
+   "<b>Defter değerinin %36 altında işlem görüyor.</b> PD/DD <b>0,64</b> — piyasa değeri ₺503,4 milyar, defter değeri ₺792,6 milyar. Holding hisseleri geleneksel olarak iştiraklerinin toplam değerine göre iskontolu işlem görür, ama bu seviyedeki bir iskonto dikkat çekicidir.",
+   "<b>Kârlılık çok güçlü:</b> 2026 ilk yarısında ana ortaklık net kârı yıllık bazda <b>+%146,5</b> arttı. Bu artışta enflasyon muhasebesinin etkisi olabilir, dolayısıyla operasyonel büyümeyle muhasebe etkisini ayırt etmek için detaylı bilançoya bakmak gerekir.",
+   "<b>Yapısal olarak portföyünün eksiğini kapatıyor.</b> Koç Holding tek bir sektöre bağlı değil: otomotiv (Ford Otosan, Tofaş), dayanıklı tüketim (Arçelik), finans, enerji ve perakende. Portföyünde üç ayrı sektör yoğunlaşması varken, tek bir kalemle geniş tabana yayılmış bir maruziyet sağlıyor.",
+   "<b>Aktif portföy yönetimi yapıyor:</b> Mart 2026'da Tüpraş'taki %2,1'lik payını 9,32 milyar TL'ye sattı, Koç Finansman'ı Ford Otosan'a devrediyor. Bu, yönetimin varlık rotasyonu yaptığını gösteriyor.",
+   "<b>Dolaylı FROTO bağlantın var:</b> Ford Otosan Koç grubunun parçası. Yani KCHOL alırsan FROTO maruziyetini bir miktar artırmış olursun — bunu hesaba kat."],
+   risk:"Fiili dolaşım oranı <b>%26,32</b> — listedeki en düşük ikinci likidite. Büyük pozisyonlarda giriş-çıkış fiyatı etkileyebilir. Holding iskontosu yıllardır kapanmayabilir; 'ucuz' olması tek başına katalizör değildir. Yıllık +%12,46 ile endeksin belirgin üstünde değil, yani momentum ılımlı."},
+  en:{nm:"Koç Holding",sec:"Diversified holding",pts:[
+   "<b>Trades 36% below book value.</b> P/B <b>0.64</b> — market cap ₺503.4bn against book value of ₺792.6bn. Holding companies traditionally trade at a discount to the sum of their parts, but a discount of this size is notable.",
+   "<b>Profitability is very strong:</b> H1 2026 net profit attributable to the parent rose <b>+146.5%</b> year-on-year. Inflation accounting may contribute to that figure, so the detailed statements are needed to separate operational growth from the accounting effect.",
+   "<b>It structurally fills your portfolio's gap.</b> Koç isn't tied to one sector: autos (Ford Otosan, Tofaş), durables (Arçelik), finance, energy and retail. With three separate sector concentrations in your portfolio, this offers broad-based exposure in a single line.",
+   "<b>Management is actively rotating assets:</b> it sold its 2.1% Tüpraş stake for ₺9.32bn in March and is transferring Koç Finansman to Ford Otosan.",
+   "<b>You'd gain indirect FROTO exposure:</b> Ford Otosan is part of the Koç group. Buying KCHOL slightly increases your existing FROTO exposure — factor that in."],
+   risk:"Free float is <b>26.32%</b> — the second-lowest liquidity on this list. Large positions could move the price on entry or exit. The holding discount may not close for years; being 'cheap' is not itself a catalyst. At +12.46% for the year, momentum is moderate rather than strong."}},
+
+ {k:"MGROS",px:654.50,fk:"15,95",pddd:"1,34",wk:4.64,mo:0.93,yr:24.18,pos:77.1,fl:50.74,pd:"₺118,5 mlr",w52:[409.72,727.00],risk:3,
+  tr:{nm:"Migros Ticaret",sec:"Gıda perakendesi",pts:[
+   "<b>Savunmacı sektör — portföyünde hiç yok.</b> Gıda perakendesi, ekonomik döngüden en az etkilenen alanlardan biridir; insanlar durgunlukta da market alışverişi yapar. Senin portföyün ise tamamen döngüsel sektörlerden oluşuyor (havacılık, otomotiv, savunma, enerji).",
+   "<b>Enflasyon geçişkenliği yüksek.</b> Perakendeciler fiyat artışlarını görece hızlı yansıtabilir, bu da yüksek enflasyon ortamında ciro büyümesini korur. Türkiye koşullarında bu yapısal bir avantajdır.",
+   "<b>Momentum pozitif ve istikrarlı:</b> haftalık +%4,64, aylık +%0,93, yıllık +%24,18. Sert bir yükseliş yok ama düşüş de yok — portföyündeki THYAO (-%12,06 aylık) ve PGSUS (-%11,83) ile tam zıt bir profil.",
+   "<b>Değerleme ılımlı:</b> F/K 15,95 ve PD/DD 1,34. Ne ucuz ne pahalı; savunmacı hisselerde bu normal bir seviyedir. Likidite iyi (dolaşım %50,74)."],
+   risk:"F/K 15,95 ile portföyündeki THYAO (3,77) veya FROTO (8,25) gibi ucuz değil — düşük çarpan arıyorsan uygun değil. Perakende sektörü asgari ücret ve personel maliyeti artışlarına duyarlıdır; marjlar dar çalışır. Piyasa değeri ₺118,5 milyar ile listedeki en küçük isim. 52 haftalık aralığın %77'sinde, yani dip bölgesinde değil."},
+  en:{nm:"Migros Ticaret",sec:"Food retail",pts:[
+   "<b>A defensive sector entirely absent from your portfolio.</b> Food retail is among the least cyclical areas; people shop for groceries in downturns too. Your portfolio is composed entirely of cyclicals (aviation, autos, defence, energy).",
+   "<b>Strong inflation pass-through.</b> Retailers can reflect price increases relatively quickly, protecting revenue growth in a high-inflation environment — a structural advantage in Turkish conditions.",
+   "<b>Momentum is positive and steady:</b> +4.64% weekly, +0.93% monthly, +24.18% yearly. No sharp rally, but no decline either — the exact opposite profile to your THYAO (-12.06% monthly) and PGSUS (-11.83%).",
+   "<b>Valuation is moderate:</b> P/E 15.95 and P/B 1.34 — neither cheap nor expensive, which is normal for defensives. Liquidity is good at 50.74% free float."],
+   risk:"At P/E 15.95 it isn't cheap like your THYAO (3.77) or FROTO (8.25) — unsuitable if you're screening for low multiples. Retail is sensitive to minimum-wage and staff-cost increases and operates on thin margins. At ₺118.5bn it's the smallest name on this list, and at 77% of its 52-week range it isn't near a low."}},
+
+ {k:"BIMAS",px:385.75,fk:"19,76",pddd:"2,45",wk:-1.15,mo:3.07,yr:48.13,pos:79.0,fl:68.77,pd:"₺462,9 mlr",w52:[237.67,425.00],risk:2,
+  tr:{nm:"BİM Mağazalar",sec:"İndirim perakendesi",pts:[
+   "<b>Listedeki en yüksek likidite:</b> fiili dolaşım oranı <b>%68,77</b>. Bu, hisseyi istediğin an fiyatı bozmadan alıp satabilmen demek. Senin MASFN (%13,63) ve METEN (%15,98) pozisyonlarının tam tersi bir profil.",
+   "<b>En savunmacı iş modeli.</b> İndirim marketçiliği, ekonomik sıkışma dönemlerinde <b>pazar payı kazanır</b> — tüketici pahalıdan ucuza kayar. Yani BİM için resesyon bir tehdit değil, çoğu zaman fırsattır. Portföyündeki hiçbir pozisyon bu özelliğe sahip değil.",
+   "<b>Uzun vadeli performans güçlü:</b> yıllık +%48,13. Bu, savunmacı bir hisse için oldukça yüksek ve sektördeki güçlü konumun fiyata yansıdığını gösteriyor.",
+   "<b>Portföy dengeleme açısından en mantıklı aday.</b> Portföyün şu an %100 döngüsel ve %36'sı risk-7 bir fonda. BİM, risk profilini aşağı çeken tek isim bu listede."],
+   risk:"<b>Değerleme pahalı:</b> F/K 19,76 ve PD/DD 2,45 — listedeki en yüksek çarpanlar. Kaliteli iş modeli için prim ödüyorsun ve bu prim daralırsa hisse düşer. 52 haftalık aralığın %79'unda, zirveye yakın. Haftalık -%1,15 ile momentum hafif negatif. Savunmacı hisseler boğa piyasasında geride kalır; endeks güçlü yükselirse bu isim geri planda kalabilir."},
+  en:{nm:"BİM Mağazalar",sec:"Discount retail",pts:[
+   "<b>Highest liquidity on the list:</b> free float of <b>68.77%</b>. You can buy or sell when you want without moving the price — the exact opposite of your MASFN (13.63%) and METEN (15.98%) positions.",
+   "<b>The most defensive business model.</b> Discount retail <b>gains market share</b> during economic squeezes as consumers trade down. For BİM a recession is often an opportunity rather than a threat. No position in your portfolio has this property.",
+   "<b>Strong long-term performance:</b> +48.13% for the year — high for a defensive name, indicating its sector position is reflected in the price.",
+   "<b>The most logical candidate for portfolio balance.</b> Your portfolio is currently 100% cyclical with 36% in a risk-7 fund. BİM is the only name here that lowers the overall risk profile."],
+   risk:"<b>Valuation is expensive:</b> P/E 19.76 and P/B 2.45 — the highest multiples on this list. You're paying a premium for business quality, and if that premium compresses the stock falls. At 79% of its 52-week range it's near the high, and weekly momentum is slightly negative at -1.15%. Defensives lag in bull markets; if the index rallies hard this name may be left behind."}},
+
+ {k:"AKBNK",px:67.40,fk:"5,25",pddd:"1,08",wk:6.31,mo:-8.42,yr:1.47,pos:40.8,fl:53.14,pd:"₺350,5 mlr",w52:[51.40,90.60],risk:4,
+  tr:{nm:"Akbank",sec:"Bankacılık",pts:[
+   "<b>Bankacılık portföyünde tamamen yok</b> — ve BIST'in en büyük sektörü bu. F/K <b>5,25</b> ile listedeki en ucuz isim; PD/DD 1,08 ile defter değerine yakın.",
+   "<b>Yüksek faiz ortamı bankalar için iki yönlüdür.</b> TR 2 yıllık tahvil %41,30. Yüksek faiz mevduat-kredi makasını genişletebilir ama aynı zamanda kredi talebini kısar ve takipteki alacakları artırır. Akbank temmuzda 3,26 milyar TL'lik takipteki kredi portföyünü 514 milyon TL'ye sattı — yani alacağın yaklaşık %16'sını tahsil etti. Bu, aktif kalitesinde bir baskı olduğunun göstergesi.",
+   "<b>Haftalık +%6,31 ile toparlanma sinyali var</b>, ancak aylık -%8,42. Kısa vadeli bir tepki yükselişi mi yoksa dip oluşumu mu, henüz belli değil.",
+   "<b>52 haftalık aralığın %40,8'inde</b> — ne dipte ne zirvede, orta bölgede. Zirvesi ₺90,60, yani mevcut fiyattan %34 yukarıda."],
+   risk:"<b>Bu listedeki en olumsuz analist arka planına sahip isim ve bunu saklamayacağım.</b> Bank of America Türk bankalarında tavsiye <b>düşürdü</b> — beklenen toparlanmanın ötelendiğini belirterek özel bankalara yönelik görüşünü geriletti. Goldman Sachs jeopolitik riskler ve enflasyonist baskılar nedeniyle Türk bankaları için tahminlerini <b>aşağı revize etti</b>. Yani iki büyük küresel kurum aynı yönde negatif. Ucuz çarpan tek başına yeterli değildir; piyasa bir şeyi fiyatlıyor olabilir. Bu ismi listeye ucuzluğu ve portföyündeki sektör boşluğu için koydum, ama kurumsal görüş açıkça karşı tarafta."},
+  en:{nm:"Akbank",sec:"Banking",pts:[
+   "<b>Banking is entirely absent from your portfolio</b> — and it's BIST's largest sector. At P/E <b>5.25</b> it's the cheapest name on this list, with P/B 1.08, close to book value.",
+   "<b>A high-rate environment cuts both ways for banks.</b> The TR 2-year yields 41.30%. High rates can widen the deposit-lending spread but also suppress loan demand and raise non-performing loans. Akbank sold a ₺3.26bn NPL portfolio for ₺514m in July — recovering roughly 16% of the receivable, a sign of pressure on asset quality.",
+   "<b>Weekly +6.31% suggests a rebound</b>, but monthly is -8.42%. Whether this is a short-term bounce or a bottom forming isn't yet clear.",
+   "<b>At 40.8% of its 52-week range</b> — neither at a low nor a high. Its high of ₺90.60 is 34% above the current price."],
+   risk:"<b>This name has the most negative analyst backdrop on the list and I won't hide it.</b> Bank of America <b>downgraded</b> Turkish banks, saying the expected recovery has been postponed and cutting its view on private banks. Goldman Sachs <b>revised down</b> its estimates for Turkish banks on geopolitical risk and inflationary pressure. Two major global houses negative in the same direction. A cheap multiple alone isn't sufficient — the market may be pricing something in. I included this name for its valuation and the sector gap in your portfolio, but institutional opinion is clearly on the other side."}}];
+
+const FILTERS={tr:[
+ ["Hangi sektörde?","Portföyünde zaten havacılık (%22), enerji (%11,7) ve TLY içinde finans/holding (%29,4) var. Bu üçünden biri değilse çeşitlendirme sağlar.","Havacılık ve enerjide çift pozisyon"],
+ ["Döviz geliri var mı?","İhracat yapan bir şirket, TL'deki değer kaybına karşı doğal koruma sağlar. Portföyünde bu korumaya sahip tek isim ASELS (ve kısmen FROTO).","Portföyün ~%100 TL cinsi"],
+ ["F/K ve PD/DD nerede?","Portföyündeki dağılım çok geniş: ASELS 39,11/5,26 · FROTO 8,25/1,53 · PGSUS 8,90/0,66 · THYAO 3,77/0,41. Aday hissenin hangi kategoriye girdiğini ve bunun bilinçli bir tercih olup olmadığını netleştir.","4 farklı yatırım felsefesi bir arada"],
+ ["52 haftalık aralıkta nerede?","Dipte olmak ucuzluk değil, kırık trend anlamına da gelebilir. FROTO (%5,5) ve PGSUS (%4,0) bunun canlı örneği — ikisi de dipte ve ikisi de düşmeye devam etti.","İki pozisyon dipte, ikisi de zararda"],
+ ["Likidite yeterli mi?","Günlük işlem hacmi ve fiili dolaşım oranına bak. THYAO ve ASELS BIST'in en likit hisseleri; MASFN (%13,63) ve METEN (%15,98) çok daha dar.","Yeni halka arzlarda dar likidite"],
+ ["Analist takibi var mı?","Kurumsal takip, düzenli bilgi akışı demektir. MASFN ve METEN'de hiç analist raporu ya da şirket haberi bulunamadı — kör uçuş.","İki pozisyonda sıfır bilgi akışı"],
+ ["Kaç işlem günlük geçmişi var?","Teknik veya trend okuması için en az birkaç ay gerekir. 7-9 günlük veriyle destek-direnç, momentum veya ortalama hesaplamak matematiksel olarak anlamsızdır.","MASFN 7 gün · METEN 9 gün"],
+ ["Bu alım toplam ağırlığı nereye taşır?","Tek bir pozisyonun portföyün %10'unu geçmesi bilinçli bir karar olmalı. TLY %36 ile bu eşiği fazlasıyla aşmış durumda ve içindeki OZATD dolaylı olarak %12,34.","TLY %36 · dolaylı OZATD ~%10-12"],
+ ["Çıkış kuralın ne?","Almadan önce hangi fiyatta veya hangi haberde satacağını yaz. ABOS örneği tam olarak bunun eksikliğini gösteriyor: mart ayında çıkmak istedin, emirler tutmadı, hisse %51 daha düştü.","ABOS'ta iki başarısız çıkış"]],
+ en:[
+ ["Which sector?","You already hold aviation (22%), energy (11.7%) and finance/holding inside TLY (29.4%). Anything outside these three adds diversification.","Double positions in aviation and energy"],
+ ["Any FX revenue?","An exporter provides a natural hedge against TRY depreciation. ASELS is your only name with that protection (FROTO partially).","~100% of portfolio is TRY"],
+ ["Where are P/E and P/B?","Your spread is very wide: ASELS 39.11/5.26 · FROTO 8.25/1.53 · PGSUS 8.90/0.66 · THYAO 3.77/0.41. Clarify which category a candidate falls into and whether that's deliberate.","Four investment philosophies at once"],
+ ["Where in the 52-week range?","Being at the low can mean a broken trend rather than cheapness. FROTO (5.5%) and PGSUS (4.0%) are live examples — both at lows, both kept falling.","Two positions at lows, both losing"],
+ ["Is liquidity sufficient?","Check daily volume and free float. THYAO and ASELS are BIST's most liquid; MASFN (13.63%) and METEN (15.98%) are far thinner.","Thin liquidity in the new listings"],
+ ["Any analyst coverage?","Institutional coverage means regular information flow. No analyst report or company news was found for MASFN or METEN — flying blind.","Zero information flow on two positions"],
+ ["How many sessions of history?","Technical or trend reading needs at least a few months. Computing support, momentum or averages on 7-9 days of data is mathematically meaningless.","MASFN 7 days · METEN 9 days"],
+ ["Where does this take total weight?","A single position exceeding 10% of the portfolio should be a conscious decision. TLY at 36% is far past that, and OZATD inside it is indirectly 12.34%.","TLY 36% · indirect OZATD ~10-12%"],
+ ["What's your exit rule?","Write down before buying at what price or on what news you'd sell. The ABOS case shows exactly what's missing: you wanted out in March, orders didn't fill, the stock fell another 51%.","Two failed exits on ABOS"]]};
+
+function market(){
+ const t=lang==="tr";
+ const f=document.getElementById("tFilter");if(!f)return;
+ f.innerHTML=`<thead><tr><th style="width:24%">${t?"Kriter":"Criterion"}</th><th style="text-align:left">${t?"Neden önemli":"Why it matters"}</th><th style="width:22%">${t?"Senin portföyün":"Your portfolio"}</th></tr></thead><tbody>`+
+  FILTERS[lang].map(([k,w,m])=>`<tr><td><span class="sym" style="font-size:11.5px">${k}</span></td>
+   <td style="text-align:left;font-size:11.5px;color:#a8b3c0">${w}</td>
+   <td class="wrn" style="font-size:11px">${m}</td></tr>`).join("")+"</tbody>";
+ const c=document.getElementById("cands");if(!c)return;
+ c.innerHTML=CAND.map(o=>{
+  const d=o[lang];
+  const rc=o.risk>=4?"dn":o.risk<=2?"up":"fl";
+  const rl=t?["","ÇOK DÜŞÜK","DÜŞÜK","ORTA","ORTA-YÜKSEK","YÜKSEK"][o.risk]:["","VERY LOW","LOW","MEDIUM","MED-HIGH","HIGH"][o.risk];
+  return `<div class="stk">
+   <div class="sk-h"><div class="sk-n">${o.k} <span class="sub">${d.nm} · ${d.sec}</span></div>
+    <div class="sk-p"><div class="px">₺${nf(o.px)}</div>
+     <div style="font-size:11px;margin-top:3px"><span class="chip ${rc}">${t?"Risk":"Risk"}: ${rl}</span></div></div></div>
+   <div class="mets">
+    <span class="met">F/K <b>${o.fk}</b></span><span class="met">PD/DD <b>${o.pddd}</b></span>
+    <span class="met ${o.wk>=0?"up":"dn"}">${t?"Haftalık":"Week"} <b>${pc(o.wk)}</b></span>
+    <span class="met ${o.mo>=0?"up":"dn"}">${t?"Aylık":"Month"} <b>${pc(o.mo)}</b></span>
+    <span class="met ${o.yr>=0?"up":"dn"}">${t?"Yıllık":"Year"} <b>${pc(o.yr)}</b></span>
+    <span class="met">${t?"52h konum":"52w pos"} <b>%${nf(o.pos,0)}</b></span>
+    <span class="met">${t?"Fiili dolaşım":"Free float"} <b>%${nf(o.fl,2)}</b></span>
+    <span class="met">${t?"Piyasa değeri":"Mkt cap"} <b>${o.pd}</b></span></div>
+   <div class="rng"><div class="rb"><div class="rf" style="width:${o.pos}%"></div><div class="rd" style="left:${o.pos}%"></div></div>
+    <div class="rl"><span>₺${nf(o.w52[0])}</span><span>₺${nf(o.w52[1])}</span></div></div>
+   ${d.pts.map(x=>`<p style="font-size:12.5px;margin:0 0 9px">${x}</p>`).join("")}
+   <div class="imp ${o.risk>=4?"dn":"fl"}" style="margin-top:4px"><b>${t?"Riskler":"Risks"}:</b> ${d.risk}</div></div>`}).join("");
+}
+
+function tblHold(){
+ const t=L[lang];
+ let h=`<thead><tr><th>${t.pos}</th><th>${t.mk}</th><th>${t.qty}</th><th>${t.px}</th><th>${t.cst}</th><th>${t.val}</th><th>${t.w}</th><th>${t.dayp}</th></tr></thead><tbody>`;
+ POS.forEach(p=>{h+=`<tr><td><span class="sym">${p.k}</span><br><span class="sub">${p.nm[lang]}</span></td><td>${p.mk}</td>
+  <td>${nf(p.qty,p.qty%1?4:0)}</td><td>${mn(p.px,p.cur,p.px<1?4:2)}</td>
+  <td>${p.cost==null?`<span class="sub">${t.unk}</span>`:mn(p.cost,p.cur)}</td>
+  <td><b>${mn(p.val,p.cur)}</b></td><td>${p.w?"%"+nf(p.w,1):"—"}</td>
+  <td class="${cl(p.dPct)}">${p.dPct?pc(p.dPct):"—"}</td></tr>`});
+ document.getElementById("tHold").innerHTML=h+"</tbody>";
+}
+
+function tblTotal(){
+ const t=L[lang];
+ let h=`<thead><tr><th>${t.pos}</th><th>${t.cst}</th><th>${t.val}</th><th>${t.pl}</th><th>${t.plp}</th></tr></thead><tbody>`;
+ POS.forEach(p=>{if(p.cost==null){h+=`<tr><td><span class="sym">${p.k}</span></td><td class="sub">${t.unk}</td><td><b>${mn(p.val,p.cur)}</b></td><td class="sub">—</td><td class="sub">—</td></tr>`;return}
+  const c=p.qty*p.cost,pl=p.val-c;
+  h+=`<tr><td><span class="sym">${p.k}</span></td><td>${mn(c,p.cur)}</td><td><b>${mn(p.val,p.cur)}</b></td>
+   <td class="${cl(pl)}">${pl>0?"+":""}${mn(pl,p.cur)}</td><td class="${cl(pl)}">${pc(pl/c*100)}</td></tr>`});
+ const bc=bistCost(),bv=bistVal(),uc=usCost(),uv=usVal();
+ h+=`<tr class="tt"><td>${t.bist}</td><td>${mn(bc,"TRY")}</td><td>${mn(bv,"TRY")}</td><td class="${cl(bv-bc)}">${mn(bv-bc,"TRY")}</td><td class="${cl(bv-bc)}">${pc((bv-bc)/bc*100)}</td></tr>`;
+ h+=`<tr class="tt"><td>${t.us}</td><td>${mn(uc,"USD")}</td><td>${mn(uv,"USD")}</td><td class="${cl(uv-uc)}">${mn(uv-uc,"USD")}</td><td class="${cl(uv-uc)}">${pc((uv-uc)/uc*100)}</td></tr>`;
+ document.getElementById("tTotal").innerHTML=h+"</tbody>";
+}
+
+function tblTly(){
+ const t=lang==="tr",V=35120.71;
+ let h=`<thead><tr><th>${t?"Hisse":"Stock"}</th><th>${t?"Fondaki ağırlık":"Weight in fund"}</th><th>${t?"Aylık değişim":"Monthly change"}</th><th>${t?"Senin payın":"Your share"}</th></tr></thead><tbody>`;
+ TLY.top.forEach(o=>{const v=V*o.w/100;
+  h+=`<tr><td><span class="sym">${o.k}</span>${o.nm[lang]!=="—"?`<br><span class="sub">${o.nm[lang]}</span>`:""}${o.x?`<br><span class="sub">${o.x}</span>`:""}</td>
+   <td><b>%${nf(o.w)}</b></td><td class="${cl(o.chg)}">${pc(o.chg)}</td>
+   <td><b>₺${nf(v,0)}</b><br><span class="sub">${t?"portföyünün":"of portfolio"} %${nf(v/TOTAL_TRY*100,2)}</span></td></tr>`});
+ document.getElementById("tTly").innerHTML=h+"</tbody>";
+}
+
+function ranges(){
+ const t=lang==="tr";
+ document.getElementById("ranges").innerHTML=POS.filter(p=>p.w52).map(p=>{
+  const pos=(p.px-p.w52[0])/(p.w52[1]-p.w52[0])*100;
+  const fromHi=(p.px-p.w52[1])/p.w52[1]*100, fromLo=(p.px-p.w52[0])/p.w52[0]*100;
+  return `<div class="rng"><div class="rh"><span style="font-size:12.5px;font-weight:700">${p.k}</span>
+   <span style="font-size:12.5px;font-weight:700">₺${nf(p.px)} <span class="sub">· ${t?"aralığın":"at"} %${nf(pos,0)}</span></span></div>
+   <div class="rb"><div class="rf" style="width:${pos}%"></div><div class="rd" style="left:${pos}%"></div></div>
+   <div class="rl"><span>₺${nf(p.w52[0])} <span style="color:var(--pos)">${t?"dipten":"from low"} ${pc(fromLo)}</span></span>
+   <span><span style="color:var(--neg)">${t?"zirveden":"from high"} ${pc(fromHi)}</span> ₺${nf(p.w52[1])}</span></div></div>`}).join("");
+}
+
+const STK_TXT={
+ ASELS:{tr:["Portföyünün en büyük hissesi ve tek anlamlı kazananı: +%12,25. 27 Şubat'ta ₺309'dan girdin, grafikte nisan ortasından mayıs başına kadar süren güçlü bir yükseliş var — ₺434'e kadar çıkmış. Sonrasında düzensiz bir geri çekilme başlamış ve hisse şu an ₺353,75.","Değerleme tarafı dikkat gerektiriyor: F/K 39,11 ve PD/DD 5,26. Bu, portföyündeki en pahalı hisse ve BIST ortalamasının belirgin üstünde. Yıllık +%97,88'lik yükselişten sonra bu çarpanlar, iyi haberlerin fiyata büyük ölçüde girdiğini gösteriyor.","Temel taraf gerçekten güçlü: ilk yarı net kâr +%71, nisan-temmuz arasında ~1,7 milyar dolar + 1,47 milyar euro sözleşme. Buna rağmen bilanço sonrası dört işlem gününde hisse ₺363'ten ₺353,75'e gerilemiş. Bu ayrışma — güçlü temel, zayıf fiyat tepkisi — takip edilmesi gereken şey.","İhracat sözleşmeleri döviz geliri sağlıyor; TL ağırlıklı portföyün için farkında olmadığın kısmi bir kur koruması bu."],
+  en:["Your largest stock and only meaningful winner at +12.25%. You entered at ₺309 on 27 February and the chart shows a strong run from mid-April into early May, reaching ₺434. An uneven pullback followed and it now sits at ₺353.75.","Valuation warrants attention: P/E 39.11 and P/B 5.26 — the most expensive stock in your portfolio and clearly above the BIST average. After a +97.88% year, these multiples suggest the good news is largely priced in.","The fundamentals are genuinely strong: H1 net profit +71%, roughly $1.7bn plus €1.47bn in contracts between April and July. Yet the stock fell from ₺363 to ₺353.75 in the four sessions after results. That divergence — strong fundamentals, weak price response — is the thing to watch.","Export contracts generate FX revenue, giving your TRY-heavy portfolio a partial currency hedge you may not have realised you had."]},
+ "ALTIN.S1":{tr:["Portföyünün tek gerçek çeşitlendiricisi ve tek uzun vadeli pozisyonu — 40 adedi Ekim 2025'ten beri elinde. Toplam +%1,00 ile başa baş görünse de asıl işlevi getiri değil, koruma.","Grafik altının kendi döngüsünü gösteriyor: şubatta ₺93,86 zirvesi, temmuz ortasında ₺66,17 dibi, şimdi ₺72,80. Yani beş ayda %29'luk bir düşüş ve ardından toparlanma. \"Güvenli liman\" ifadesi fiyat istikrarı anlamına gelmiyor.","Son bir haftada +%7,00 ile portföyünün en hızlı yükselen kalemi; günlük +%2,45 ile de en iyi BIST pozisyonun. Hisselerin düştüğü bir günde artıda kalması, düşük korelasyonun somut faydası.","Her lot 0,01 gram saf altına denk; 5.000 lot (50 gram) üzerinde fiziki altına dönüştürme opsiyonu var. 52 haftalık zirve ₺116,65 olarak görünüyor — mevcut fiyatın %37,6 üstünde."],
+  en:["The portfolio's only genuine diversifier and only long-term position — 40 units held since October 2025. At +1.00% overall it looks flat, but its purpose is protection, not return.","The chart shows gold's own cycle: a ₺93.86 peak in February, a ₺66.17 trough in mid-July, now ₺72.80 — a 29% decline over five months followed by recovery. \"Safe haven\" does not mean price stability.","Up 7.00% over the past week, your fastest riser, and up 2.45% today, your best BIST line. Staying positive on a day equities fell is the concrete benefit of low correlation.","Each lot equals 0.01g of pure gold, with an option to convert to physical above 5,000 lots (50g). The 52-week high shows as ₺116.65 — 37.6% above the current price."]},
+ THYAO:{tr:["Portföyünün en büyük zararı: -%12,00, yani -₺1.336. Bu tek pozisyon toplam zararının tamamından fazlasını açıklıyor.","Zamanlama sorunu grafikte açıkça görünüyor. 6 Temmuz'da ₺348'den aldın; seri, hissenin 7 Temmuz'da ₺348,25 ile son üç ayın en yüksek kapanışını yaptığını gösteriyor. Neredeyse tam tepeden girmişsin ve sonrasında hisse kesintisiz aşağı gelmiş.","Değerleme çarpıcı biçimde ucuz: F/K 3,77, PD/DD 0,41. Piyasa değeri ₺422,6 milyar iken defter değeri ₺1.018,5 milyar — yani şirket defter değerinin %41'ine işlem görüyor. Bu ya ciddi bir fırsat ya da piyasanın fiyatladığı bir sorun.","İkinci okumayı destekleyen şey haber akışı: HSBC 20 Temmuz'da havacılıkta zayıf performans öngördü ve aylık -%12,06'lık düşüş tam o pencerede yoğunlaştı. Buna karşılık operasyonel veriler iyi: temmuzda 9,5 milyon yolcu, uçuş ağı 358 noktaya çıktı, doluluk oranları geçen yıla göre iyileşti. Ancak AJet'in %30 indirim kampanyası, yolcu sayısı yüksek olsa bile bilet başına gelirin baskı altında olabileceğini düşündürüyor.","Yıllık değişim +%0,13 — bir yılda net olarak hiçbir yere gitmemiş."],
+  en:["Your largest loss: -12.00%, or -₺1,336. This single position accounts for more than your entire net loss.","The timing problem is clear in the chart. You bought at ₺348 on 6 July; the series shows THYAO closed at ₺348.25 on 7 July, its highest close in three months. You entered almost exactly at the top and it fell steadily afterwards.","Valuation is strikingly cheap: P/E 3.77, P/B 0.41. Market cap is ₺422.6bn against book value of ₺1,018.5bn — the company trades at 41% of book. That's either a serious opportunity or a problem the market is pricing.","The news flow supports the second reading: HSBC projected weak aviation performance on 20 July, and the -12.06% monthly decline concentrated in exactly that window. Operationally the data is good — 9.5m passengers in July, network expanded to 358 destinations, load factors improved year-on-year. But AJet's 30% discount campaign suggests revenue per passenger may be under pressure even with strong traffic.","Yearly change is +0.13% — net zero progress over a full year."]},
+ FROTO:{tr:["-%10,58 ile ikinci büyük zararın. 9 Haziran'da ₺87,80'den 100 adet aldın; grafiğe bakınca hisse şubattaki ₺129,84 zirvesinden beri kesintisiz aşağı geliyor. Yani düşen bir trendin ortasına girmişsin ve düşüş devam etmiş.","Şu an 52 haftalık aralığın yalnızca %5,5'inde — neredeyse tam dipte, zirvesinden %40,3 aşağıda. Yıllık -%19,02.","Bilanço tarafı aslında olumlu: ikinci çeyrek kârı beklentileri aştı. Ancak ciro yıllık bazda gerilerken kârın artması, büyümeden değil maliyet kontrolünden gelen bir iyileşmeye işaret ediyor; sürdürülebilirliği daha zayıftır.","Asıl baskı sektörden: temmuzda otomotiv pazarı yıllık %25 daraldı ve 80.786 adede indi. Otomotiv yüksek sabit maliyetli bir sektör olduğu için hacim düştüğünde marj hızla erir. HSBC de Ford Otosan tavsiyesini \"Al\"dan \"Tut\"a indirdi.","Tampon tarafı: Avrupa ağırlıklı ihracat defteri döviz geliri sağlıyor ve yurt içi daralmayı kısmen dengeliyor. F/K 8,25, PD/DD 1,53 — ucuz ama THYAO kadar değil."],
+  en:["Your second largest loss at -10.58%. You bought 100 shares at ₺87.80 on 9 June; the chart shows the stock had been falling continuously since its ₺129.84 February peak. You stepped into a downtrend and it continued.","It now sits at just 5.5% of its 52-week range — almost exactly at the low, 40.3% below the high. Down 19.02% over the year.","Results were actually positive: Q2 profit beat expectations. But profit rising while revenue falls points to cost control rather than growth, which is less durable.","The real pressure is sectoral: the July auto market contracted 25% year-on-year to 80,786 units. Autos is a high-fixed-cost industry, so falling volume erodes margin quickly. HSBC also cut Ford Otosan from Buy to Hold.","On the buffer side: the Europe-weighted export book generates FX revenue and partly offsets the domestic contraction. P/E 8.25, P/B 1.53 — cheap, though not as cheap as THYAO."]},
+ PGSUS:{tr:["Portföyünün en küçük hisse pozisyonu (₺614, %0,6) ama en sert düşen hissesi: yıllık -%41,36, aylık -%11,83.","52 haftalık aralığın sadece %4,0'ında — tüm portföyündeki en dipte duran pozisyon, zirvesinden %44,1 aşağıda.","Kritik nokta: PGSUS'un aylık -%11,83'ü, THYAO'nun -%12,06'sıyla neredeyse birebir aynı. Bu, iki hissenin fiilen tek bir bahis olduğunun sayısal kanıtı. HSBC'nin havacılık uyarısı ikisini birden vurdu.","Şirket yurt dışı biletleri 9 eurodan başlayan fiyatlarla satışa sundu. Bu iki yönlü okunabilir: doluluk oranını yükseltir ama bilet başına gelirin baskı altında olduğunu da gösterir. Düşük maliyetli havayollarında kârlılık yan gelirlerden gelir ve bu tür kampanyalar genelde talep zayıfladığında başlatılır.","Değerleme ucuz: F/K 8,90, PD/DD 0,66 — defter değerinin altında. Pozisyon büyüklüğü ise bir sorun: ₺614 ne anlamlı risk ne anlamlı getiri sağlıyor. Ya büyütülmeli ya kapatılmalı."],
+  en:["Your smallest equity position (₺614, 0.6%) but the sharpest faller: down 41.36% over the year and 11.83% over the month.","It sits at just 4.0% of its 52-week range — the most depressed position in your entire portfolio, 44.1% below its high.","The critical point: PGSUS's -11.83% monthly is almost identical to THYAO's -12.06%. That's numerical proof the two are effectively a single bet. HSBC's aviation warning hit both at once.","The company put international fares on sale from €9. That reads both ways: it lifts load factor but signals revenue per passenger is under pressure. Low-cost carrier profitability comes from ancillaries, and such campaigns typically launch when demand softens.","Valuation is cheap: P/E 8.90, P/B 0.66 — below book. The position size is the problem though: ₺614 delivers neither meaningful risk nor meaningful return. It should either be sized up or closed."]},
+ MASFN:{tr:["30 Temmuz'da halka arz oldu — yalnızca 7 işlem günlük fiyat geçmişi var. Bu kadar kısa veriyle trend, destek-direnç veya teknik gösterge okumak mümkün değil.","İlk yedi günde ₺45,66'dan ₺42,84'e inip ₺44,56'ya toparlamış; yaklaşık %6'lık bir bant. Senin maliyetin ₺45,68, yani halka arz fiyatına çok yakın girmişsin ve şu an -%2,45'tesin.","Yayımlanmış F/K, PD/DD veya defter değeri verisi yok — yeni halka arzlarda ilk anlamlı finansal veri genelde ilk çeyreklik raporla gelir. Piyasa değeri ₺24,7 milyar, fiili dolaşım oranı %13,63 (düşük, bu da fiyat oynaklığını artırır).","Şirkete özel haber bulunamadı; doviz.com'un ilgili sayfası yalnızca genel piyasa haberi gösteriyor. Takip için KAP bildirimleri ve halka arz izahnamesi (fon nereye harcanacak, ortaklar için lock-up süresi ne kadar) tek kaynak.","METEN ile birlikte enerji sektöründe ikinci pozisyonun — fark edilmemiş bir sektör yoğunlaşması."],
+  en:["Listed on 30 July — only 7 trading days of price history. Trends, support/resistance and technical indicators are meaningless on data this short.","Over the first seven days it went from ₺45.66 down to ₺42.84 and back to ₺44.56, roughly a 6% band. Your cost is ₺45.68, very close to the listing price, leaving you at -2.45%.","There's no published P/E, P/B or book value — for new listings the first meaningful financials usually arrive with the first quarterly report. Market cap is ₺24.7bn with a free float of just 13.63%, which amplifies price volatility.","No company-specific news was found; the relevant doviz.com page shows only general market items. The only sources for now are regulatory filings and the IPO prospectus (use of proceeds, insider lock-up period).","Together with METEN this is your second energy-sector position — an unnoticed sector concentration."]},
+ METEN:{tr:["28 Temmuz'da halka arz oldu — 9 işlem günlük geçmiş. MASFN ile aynı uyarılar geçerli: bu veriyle teknik analiz yapılamaz.","Dokuz günde ₺22'den ₺24,20'ye çıkmış, ₺17,65'e inmiş, şimdi ₺19,52 — yani %27'lik bir bant. Yeni halka arzların ilk haftalardaki tipik oynaklığı.","Burada işlem geçmişinden çıkan önemli bir detay var: 30 Temmuz'da 95 adedi ₺24,20'den satmak için verdiğin emir iptal edilmiş. ₺24,20 halka arz sonrası en yüksek kapanıştı. Emir geçseydi bugünkü fiyata göre yaklaşık ₺445 daha fazla elde edecektin.","Maliyetin ₺20,00 (halka arz fiyatı), şu an -%2,40'tasın. Piyasa değeri ₺12,4 milyar, fiili dolaşım %15,98. Yayımlanmış finansal oran verisi yok, şirkete özel haber de bulunamadı."],
+  en:["Listed on 28 July — 9 trading days of history. The same caveats as MASFN apply: technical analysis isn't possible on this data.","Over nine days it went from ₺22 to ₺24.20, down to ₺17.65, now ₺19.52 — a 27% band, typical first-weeks volatility for a new listing.","One important detail from your transaction history: your 30 July order to sell 95 units at ₺24.20 was cancelled. ₺24.20 was the highest close after listing. Had it filled, you'd have realised roughly ₺445 more than today's price.","Your cost is ₺20.00 (the offer price), leaving you at -2.40%. Market cap ₺12.4bn, free float 15.98%. No published financial ratios and no company-specific news found."]}};
+
+function stocks(){
+ const t=lang==="tr";
+ document.getElementById("stocks").innerHTML=POS.filter(p=>p.w52).map(p=>{
+  const mets=[];
+  if(p.fk)mets.push(`<span class="met">F/K <b>${p.fk}</b></span>`);
+  if(p.pddd)mets.push(`<span class="met">PD/DD <b>${p.pddd}</b></span>`);
+  if(p.pd)mets.push(`<span class="met">${t?"Piyasa değeri":"Mkt cap"} <b>${p.pd}</b></span>`);
+  if(p.dd)mets.push(`<span class="met">${t?"Defter değeri":"Book"} <b>${p.dd}</b></span>`);
+  mets.push(`<span class="met ${p.wk>=0?"up":"dn"}">${t?"Haftalık":"Week"} <b>${pc(p.wk)}</b></span>`);
+  if(p.mo!=null)mets.push(`<span class="met ${p.mo>=0?"up":"dn"}">${t?"Aylık":"Month"} <b>${pc(p.mo)}</b></span>`);
+  if(p.yr!=null)mets.push(`<span class="met ${p.yr>=0?"up":"dn"}">${t?"Yıllık":"Year"} <b>${pc(p.yr)}</b></span>`);
+  if(p.vol)mets.push(`<span class="met">${t?"Hacim":"Volume"} <b>${p.vol}</b></span>`);
+  if(p.halka)mets.push(`<span class="met">${t?"Fiili dolaşım":"Free float"} <b>${p.halka}</b></span>`);
+  if(p.ipo)mets.push(`<span class="met">${t?"Halka arz":"IPO"} <b>${p.ipo}</b></span>`);
+  const pl=(p.px-p.cost)/p.cost*100;
+  const txt=(STK_TXT[p.k]||{})[lang]||[];
+  return `<div class="stk"><div class="sk-h">
+    <div><div class="sk-n">${p.k} <span class="sub">${p.nm[lang]}</span></div></div>
+    <div class="sk-p"><div class="px">₺${nf(p.px)}</div>
+      <div class="${cl(p.dPct)}" style="font-size:12.5px;font-weight:650">${pc(p.dPct)} ${t?"bugün":"today"}</div>
+      <div class="${cl(pl)}" style="font-size:11.5px">${t?"senin K/Z":"your P&L"} ${pc(pl)}</div></div></div>
+   <div class="mets">${mets.join("")}</div>
+   <div class="cb" style="height:200px"><canvas id="sc_${p.k.replace(".","_")}"></canvas></div>
+   ${txt.map(x=>`<p style="font-size:12.5px;margin-top:11px">${x}</p>`).join("")}</div>`}).join("");
+}
+
+function fundCards(){
+ const t=lang==="tr";
+ document.getElementById("fund").innerHTML=POS.filter(p=>p.mk!=="ABD").map(p=>{
+  let body;
+  if(p.k==="TLY"){body=t?["Portföyün %36'sı. SPK risk değeri 7/7, yıllık yönetim ücreti %2,00, satış valörü T+2.","Fonun %78,63'ü hisse senedinde; tek bir hisse (OZATD) ağırlığın %34,27'si.","Repo kalemi -%9,33 — fon borçlanarak kaldıraç kullanıyor.","Fonun %13'ü yönetim şirketiyle aynı gruba bağlı şirketlerde (TEHOL + TERA).","Detaylar için TLY Fonu sekmesine bak."]
+   :["36% of your portfolio. Regulator risk score 7/7, 2.00% annual management fee, T+2 redemption.","78.63% of the fund is in equities; a single stock (OZATD) is 34.27% of the weighting.","The repo line at -9.33% means the fund borrows — it uses leverage.","About 13% of the fund sits in companies from its own manager's group (TEHOL + TERA).","See the TLY Fund tab for details."];}
+  else body=(STK_TXT[p.k]||{})[lang]||[];
+  const pl=p.cost?(p.px-p.cost)/p.cost*100:null;
+  return `<div class="stk" style="margin:0"><div class="sk-h"><div class="sk-n">${p.k}<span class="sub">${p.nm[lang]}</span></div>
+   <div class="sk-p"><div style="font-size:13px;font-weight:700">%${nf(p.w,1)} ${t?"ağırlık":"weight"}</div>
+   ${pl!=null?`<div class="${cl(pl)}" style="font-size:12px">${pc(pl)}</div>`:`<div class="sub">${t?"maliyet yok":"no cost basis"}</div>`}</div></div>
+   <ul class="li">${body.map(x=>`<li>${x}</li>`).join("")}</ul></div>`}).join("");
+}
+
+let ch={};
+function draw(){
+ Object.values(ch).forEach(c=>c&&c.destroy());ch={};
+ const t=lang==="tr";
+
+ ch.alloc=new Chart(document.getElementById("cAlloc"),{type:"doughnut",
+  data:{labels:POS.filter(p=>p.val>0).map(p=>p.k),
+   datasets:[{data:POS.filter(p=>p.val>0).map(p=>p.cur==="USD"?p.val*USDTRY:p.val),
+   backgroundColor:["#8b5cf6","#5b8def","#d9a441","#2ea9b0","#a371f7","#2ecc71","#f0883e","#ff5c5c","#616e7d"],
+   borderWidth:2,borderColor:"#141922"}]},
+  options:{responsive:!0,maintainAspectRatio:!1,cutout:"58%",
+   plugins:{legend:{position:"right",labels:{boxWidth:11,padding:8,font:{size:11},color:"#a9b4c2"}},
+   tooltip:{callbacks:{label:c=>` ${c.label}: ₺${nf(c.raw)} (${nf(c.raw/TOTAL_TRY*100,1)}%)`}}}}});
+
+ ch.day=new Chart(document.getElementById("cDay"),{type:"bar",
+  data:{labels:POS.map(p=>p.k),datasets:[{data:POS.map(p=>p.dPct),
+   backgroundColor:POS.map(p=>p.dPct>=0?"#2ecc71":"#ff5c5c"),borderRadius:4}]},
+  options:{responsive:!0,maintainAspectRatio:!1,plugins:{legend:{display:!1},tooltip:{callbacks:{label:c=>` ${pc(c.raw)}`}}},
+   scales:{y:{ticks:{callback:v=>v+"%"},grid:{color:"#1e2430"}},x:{grid:{display:!1},ticks:{font:{size:10}}}}}});
+
+ if(document.getElementById("cHist"))ch.hist=new Chart(document.getElementById("cHist"),{type:"line",
+  data:{labels:HIST.map(h=>h.d),datasets:[
+   {label:t?"Portföy değeri":"Portfolio value",data:HIST.map(h=>h.v),borderColor:"#5b8def",
+    backgroundColor:"rgba(91,141,239,.13)",fill:!0,tension:.25,pointRadius:0,pointHoverRadius:5,borderWidth:2},
+   {label:t?"Yatırılan sermaye":"Capital invested",data:HIST.map(h=>h.c),borderColor:"#f0a92e",
+    borderDash:[6,4],pointRadius:0,borderWidth:1.8,fill:!1,stepped:!0}]},
+  options:{responsive:!0,maintainAspectRatio:!1,interaction:{mode:"index",intersect:!1},
+   plugins:{legend:{position:"bottom",labels:{boxWidth:11,font:{size:11},color:"#a9b4c2"}},
+   tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ₺${nf(c.raw,0)}`}}},
+   scales:{y:{ticks:{callback:v=>"₺"+nf(v,0)},grid:{color:"#1e2430"}},
+   x:{grid:{display:!1},ticks:{maxTicksLimit:12,font:{size:9.5},maxRotation:0}}}}});
+
+ if(document.getElementById("cPnl")){
+  const d=POS.filter(p=>p.cost!=null).map(p=>({k:p.k,v:p.cur==="USD"?(p.val-p.qty*p.cost)*USDTRY:p.val-p.qty*p.cost}));
+  ch.pnl=new Chart(document.getElementById("cPnl"),{type:"bar",
+   data:{labels:d.map(x=>x.k),datasets:[{data:d.map(x=>x.v),backgroundColor:d.map(x=>x.v>=0?"#2ecc71":"#ff5c5c"),borderRadius:4}]},
+   options:{indexAxis:"y",responsive:!0,maintainAspectRatio:!1,plugins:{legend:{display:!1},
+    tooltip:{callbacks:{label:c=>` ₺${nf(c.raw)}`}}},
+    scales:{x:{ticks:{callback:v=>"₺"+nf(v,0)},grid:{color:"#1e2430"}},y:{grid:{display:!1}}}}});}
+
+ if(document.getElementById("cD30")){
+  const l30=HIST.slice(-30);
+  ch.d30=new Chart(document.getElementById("cD30"),{type:"bar",
+   data:{labels:l30.map(h=>h.d),datasets:[{data:l30.map(h=>h.chg),
+    backgroundColor:l30.map(h=>h.chg>=0?"#2ecc71":"#ff5c5c"),borderRadius:3}]},
+   options:{responsive:!0,maintainAspectRatio:!1,plugins:{legend:{display:!1},
+    tooltip:{callbacks:{label:c=>` ₺${nf(c.raw,0)} (${pc(l30[c.dataIndex].chgPct)})`}}},
+    scales:{y:{ticks:{callback:v=>"₺"+nf(v,0)},grid:{color:"#1e2430"}},
+    x:{grid:{display:!1},ticks:{maxTicksLimit:10,font:{size:9.5},maxRotation:0}}}}});}
+
+ if(document.getElementById("cMom")){
+  const ps=POS.filter(p=>p.w52);
+  ch.mom=new Chart(document.getElementById("cMom"),{type:"bar",
+   data:{labels:ps.map(p=>p.k),datasets:[
+    {label:t?"Haftalık":"Weekly",data:ps.map(p=>p.wk),backgroundColor:"#5b8def",borderRadius:3},
+    {label:t?"Aylık":"Monthly",data:ps.map(p=>p.mo),backgroundColor:"#f0883e",borderRadius:3},
+    {label:t?"Yıllık":"Yearly",data:ps.map(p=>p.yr),backgroundColor:"#8b5cf6",borderRadius:3}]},
+   options:{responsive:!0,maintainAspectRatio:!1,
+    plugins:{legend:{position:"bottom",labels:{boxWidth:11,font:{size:11},color:"#a9b4c2"}},
+     tooltip:{callbacks:{label:c=>c.raw==null?` ${c.dataset.label}: ${t?"veri yok":"no data"}`:` ${c.dataset.label}: ${pc(c.raw)}`}}},
+    scales:{y:{ticks:{callback:v=>v+"%"},grid:{color:"#1e2430"}},x:{grid:{display:!1}}}}});}
+
+ POS.filter(p=>p.w52).forEach(p=>{
+  const id="sc_"+p.k.replace(".","_"),el=document.getElementById(id);if(!el)return;
+  let labels,data;
+  const s=SER[p.k];
+  if(Array.isArray(s)){labels=DATES;data=s;}
+  else{const i=DATES.indexOf(s.s);labels=DATES.slice(i);data=s.v;}
+  ch[id]=new Chart(el,{type:"line",
+   data:{labels,datasets:[
+    {label:t?"Fiyat":"Price",data,borderColor:"#5b8def",backgroundColor:"rgba(91,141,239,.12)",
+     fill:!0,tension:.22,pointRadius:0,pointHoverRadius:4,borderWidth:1.8},
+    {label:t?"Senin maliyetin":"Your cost",data:labels.map(()=>p.cost),borderColor:"#f0a92e",
+     borderDash:[5,4],pointRadius:0,borderWidth:1.4,fill:!1}]},
+   options:{responsive:!0,maintainAspectRatio:!1,interaction:{mode:"index",intersect:!1},
+    plugins:{legend:{position:"bottom",labels:{boxWidth:10,font:{size:10},color:"#8d99a8",padding:6}},
+     tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ₺${nf(c.raw)}`}}},
+    scales:{y:{ticks:{callback:v=>"₺"+nf(v,0),font:{size:9.5}},grid:{color:"#1e2430"}},
+     x:{grid:{display:!1},ticks:{maxTicksLimit:8,font:{size:9},maxRotation:0}}}}});});
+
+ if(document.getElementById("cTlyAlloc"))ch.tlyA=new Chart(document.getElementById("cTlyAlloc"),{type:"bar",
+  data:{labels:TLY.alloc.map(a=>a.n[lang]),datasets:[{data:TLY.alloc.map(a=>a.v),
+   backgroundColor:TLY.alloc.map(a=>a.v<0?"#ff5c5c":"#5b8def"),borderRadius:4}]},
+  options:{indexAxis:"y",responsive:!0,maintainAspectRatio:!1,plugins:{legend:{display:!1},
+   tooltip:{callbacks:{label:c=>` ${pc(c.raw)}`}}},
+   scales:{x:{ticks:{callback:v=>v+"%"},grid:{color:"#1e2430"}},y:{grid:{display:!1},ticks:{font:{size:10.5}}}}}});
+
+ if(document.getElementById("cTlyRet"))ch.tlyR=new Chart(document.getElementById("cTlyRet"),{type:"bar",
+  data:{labels:[t?"1 hafta":"1 wk",t?"1 ay":"1 mo",t?"6 ay":"6 mo","2026",t?"1 yıl":"1 yr"],
+   datasets:[{data:[TLY.ret.wk,TLY.ret.mo,TLY.ret.m6,TLY.ret.ytd,TLY.ret.yr],
+   backgroundColor:"#2ecc71",borderRadius:4}]},
+  options:{responsive:!0,maintainAspectRatio:!1,plugins:{legend:{display:!1},
+   tooltip:{callbacks:{label:c=>` ${pc(c.raw)}`}}},
+   scales:{y:{type:"logarithmic",ticks:{callback:v=>v+"%"},grid:{color:"#1e2430"}},x:{grid:{display:!1}}}}});
+}
+
+function hdrTotal(){
+ const t=lang==="tr";
+ const dTot=POS.reduce((a,p)=>a+(p.cur==="USD"?p.dTL*USDTRY:p.dTL),0);
+ const prev=TOTAL_TRY-dTot;
+ const pct=prev?dTot/prev*100:0;
+ document.querySelector(".tv").textContent="₺"+nf(TOTAL_TRY);
+ const c=document.querySelector(".tc");
+ c.className="tc "+cl(dTot);
+ c.innerHTML=`${dTot>0?"+":""}₺${nf(Math.abs(dTot))} (${pc(pct)}) <span class="sub">${
+  t?"· günlük · son veri 08.08.2026 kapanış":"· today · last data 08 Aug 2026 close"}</span>`+
+  (TX.length?`<span class="sub" style="color:var(--wr)"> · ${TX.length} ${t?"girdiğin işlem uygulandı":"of your trades applied"}</span>`:"");
+}
+function render(){applyTX();hdrTotal();kpiTop();kpiPL();kpiTLY();tblHold();signals();tblTotal();tblTly();ranges();stocks();fundCards();market();draw();}
+function setLang(l){lang=l;document.body.className=l;document.documentElement.lang=l;
+ document.getElementById("btr").classList.toggle("on",l==="tr");
+ document.getElementById("ben").classList.toggle("on",l==="en");
+ try{localStorage.setItem("pfL",l)}catch(e){}render();}
+function go(i,el){document.querySelectorAll(".tp").forEach((p,n)=>p.classList.toggle("on",n===i));
+ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));el.classList.add("on");
+ try{localStorage.setItem("pfT",i)}catch(e){}setTimeout(draw,30);}
+
+// ============================================================
+//  data.json yükleyici
+//  GitHub Actions'ın ürettiği güncel veriyi okur ve gömülü veriyi
+//  onunla değiştirir. Dosya bulunamazsa gömülü veriyle devam eder.
+// ============================================================
+const AY_ISIM={"01":"Oca","02":"Şub","03":"Mar","04":"Nis","05":"May","06":"Haz",
+ "07":"Tem","08":"Ağu","09":"Eyl","10":"Eki","11":"Kas","12":"Ara"};
+
+function veriyiUygula(D){
+  if(!D||!D.hisseler)return false;
+
+  // --- fiyat ve temel oranlar ---
+  POS_BASE.forEach(p=>{
+    const h=D.hisseler[p.k];
+    if(!h||h.px==null)return;
+    const onceki=p.px;
+    p.px=h.px;
+    if(h.dPct!=null)p.dPct=h.dPct;
+    p.val=p.qty*p.px;
+    if(p.dPct&&p.px){const prv=p.px/(1+p.dPct/100);p.dTL=p.qty*(p.px-prv);}
+    if(h.w52)p.w52=h.w52;
+    if(h.dayR)p.dayR=h.dayR;
+    if(h.wk!=null)p.wk=h.wk;
+    if(h.mo!=null)p.mo=h.mo;
+    if(h.yr!=null)p.yr=h.yr;
+    if(h.fk)p.fk=h.fk;
+    if(h.pddd)p.pddd=h.pddd;
+    if(h.pd)p.pd=h.pd;
+    if(h.dd)p.dd=h.dd;
+    if(h.vol)p.vol=h.vol;
+    if(h.halka)p.halka=h.halka;
+    p.eskiVeri=!!h.eski;
+  });
+
+  // --- tarihsel seriler ---
+  if(D.seriler){
+    const tumTarih=new Set();
+    Object.values(D.seriler).forEach(o=>Object.keys(o||{}).forEach(d=>tumTarih.add(d)));
+    if(tumTarih.size>5){
+      const yeni=[...tumTarih].sort();
+      DATES.length=0;DATES.push(...yeni);
+      Object.keys(D.seriler).forEach(k=>{
+        const o=D.seriler[k];if(!o||!Object.keys(o).length)return;
+        const gunler=Object.keys(o).sort();
+        if(gunler.length>=yeni.length*0.9){
+          SER[k]=yeni.map(d=>o[d]!==undefined?o[d]:null);
+        }else{
+          SER[k]={s:gunler[0],v:gunler.map(d=>o[d])};
+        }
+      });
+    }
+  }
+
+  // --- TLY fonu ---
+  if(D.tly){
+    const t=D.tly,sy=x=>{if(x==null)return null;const v=parseFloat(String(x).replace(/\./g,"").replace(",","."));return isNaN(v)?null:v};
+    if(sy(t.fiyat)) {TLY.price=sy(t.fiyat);const tp=POS_BASE.find(p=>p.k==="TLY");
+      if(tp){tp.px=TLY.price;tp.val=tp.qty*tp.px;}}
+    if(t.riskDeger)TLY.risk=+t.riskDeger;
+    if(t.yonetimUcreti)TLY.mgmtFee="%"+t.yonetimUcreti;
+    if(t.volatilite)TLY.vol="%"+t.volatilite;
+    if(t.fonBuyukluk)TLY.fundSize="₺"+t.fonBuyukluk;
+    if(t.yatirimci)TLY.investors=t.yatirimci;
+    if(t.rapor)TLY.report={tr:t.rapor,en:t.rapor};
+    if(t.getiri){const g=t.getiri;
+      if(sy(g.hafta)!=null)TLY.ret.wk=sy(g.hafta);
+      if(sy(g.ay)!=null)TLY.ret.mo=sy(g.ay);
+      if(sy(g.ay6)!=null)TLY.ret.m6=sy(g.ay6);
+      if(sy(g.yil)!=null)TLY.ret.yr=sy(g.yil);}
+    if(t.alloc&&t.alloc.length>=3)
+      TLY.alloc=t.alloc.map(a=>({n:{tr:a.n,en:a.n},v:a.v}));
+    if(t.top&&t.top.length>=3){
+      const eski={};TLY.top.forEach(o=>eski[o.k]=o);
+      TLY.top=t.top.map(o=>({k:o.k,nm:(eski[o.k]||{}).nm||{tr:"—",en:"—"},
+        w:o.w,chg:o.chg,x:(eski[o.k]||{}).x||null}));
+    }
+  }
+
+  // --- aday hisseler ---
+  if(D.adaylar){
+    CAND.forEach(c=>{
+      const a=D.adaylar[c.k];if(!a||a.px==null)return;
+      c.px=a.px;
+      if(a.fk)c.fk=a.fk;
+      if(a.pddd)c.pddd=a.pddd;
+      if(a.wk!=null)c.wk=a.wk;
+      if(a.mo!=null)c.mo=a.mo;
+      if(a.yr!=null)c.yr=a.yr;
+      if(a.pd)c.pd=a.pd;
+      if(a.halka)c.fl=parseFloat(String(a.halka).replace("%","").replace(",","."))||c.fl;
+      if(a.w52){c.w52=a.w52;
+        c.pos=+(((c.px-a.w52[0])/(a.w52[1]-a.w52[0]))*100).toFixed(1);}
+    });
+  }
+
+  // --- piyasa geneli ---
+  if(D.piyasa){
+    if(D.piyasa.kazandiran)MKT.gain=D.piyasa.kazandiran.map(x=>[x.s,x.px,x.chg]);
+    if(D.piyasa.kaybettiren)MKT.lose=D.piyasa.kaybettiren.map(x=>[x.s,x.px,x.chg]);
+    if(D.piyasa.likit)MKT.vol=D.piyasa.likit.slice(0,5)
+      .map(x=>[x.s,x.px,"₺"+(x.vol/1e9).toFixed(1)+" mlr"]);
+  }
+  return true;
+}
+
+function guncellemeNotu(D){
+  const t=lang==="tr";
+  const d=new Date(D.guncelleme);
+  const zaman=d.toLocaleString(t?"tr-TR":"en-GB",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
+  const gecen=Math.round((Date.now()-d.getTime())/60000);
+  const taze=gecen<90;
+  const hata=(D.hatalar||[]).length;
+  const el=document.querySelector("#p0 .nc");
+  if(!el)return;
+  el.className="nc "+(taze?"i":"w");
+  el.innerHTML=(t
+   ?`<b>Son güncelleme: ${zaman}</b> (${gecen<60?gecen+" dakika":Math.round(gecen/60)+" saat"} önce) · Kaynak: doviz.com (Forinvest) + fintables.com · BIST verisi 15 dk gecikmeli.`
+   :`<b>Last updated: ${zaman}</b> (${gecen<60?gecen+" minutes":Math.round(gecen/60)+" hours"} ago) · Source: doviz.com (Forinvest) + fintables.com · BIST data 15 min delayed.`)
+   +(taze?"":(t?" <b>Veri bayat olabilir</b> — GitHub Actions çalışmamış olabilir."
+              :" <b>Data may be stale</b> — the GitHub Action may not have run."))
+   +(hata?(t?` · Bu turda ${hata} kalem çekilemedi, eski değerleri korundu.`
+             :` · ${hata} item(s) failed this round; previous values kept.`):"");
+}
+
+(async function yukle(){
+  try{
+    const r=await fetch("data.json?t="+Date.now(),{cache:"no-store"});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const D=await r.json();
+    if(veriyiUygula(D)){
+      window.__D=D;
+      render();
+      guncellemeNotu(D);
+      console.log("data.json yüklendi:",D.guncelleme);
+    }
+  }catch(e){
+    console.warn("data.json okunamadı, gömülü veri kullanılıyor:",e.message);
+    const el=document.querySelector("#p0 .nc");
+    if(el){const t=lang==="tr";
+      el.className="nc w";
+      el.innerHTML=t
+       ?"<b>Canlı veri okunamadı</b> — panel içine gömülü son veriyle çalışıyor. Bu dosyayı GitHub Pages üzerinden açtıysan Actions'ın çalışıp <code>data.json</code> ürettiğinden emin ol."
+       :"<b>Live data unavailable</b> — running on the data embedded in this file. If you opened this via GitHub Pages, check that the Action ran and produced <code>data.json</code>.";}
+  }
+})();
+
+let sl="tr";try{sl=localStorage.getItem("pfL")||"tr"}catch(e){}
+setLang(sl);
+try{const st=parseInt(localStorage.getItem("pfT")||"0");if(st>0)go(st,document.querySelectorAll(".tab")[st])}catch(e){}
+</script>
+</body>
+</html>
