@@ -1,0 +1,63 @@
+name: Veri güncelle
+
+on:
+  schedule:
+    - cron: "0,30 6-15 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: veri-guncelle
+  cancel-in-progress: false
+
+jobs:
+  guncelle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+
+      - name: Node kur
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Playwright ve tarayıcıyı kur
+        run: |
+          npm install playwright@1.49.0
+          npx playwright install --with-deps chromium
+
+      - name: Veriyi çek
+        run: node scrape.js
+        continue-on-error: true
+
+      - name: data.json geçerli mi kontrol et
+        run: |
+          if [ ! -f data.json ]; then
+            echo "data.json yok"
+            exit 1
+          fi
+          node -e "
+            const d = JSON.parse(require('fs').readFileSync('data.json','utf8'));
+            const n = Object.values(d.hisseler||{}).filter(h=>h.px).length;
+            console.log('Fiyati olan hisse:', n);
+            if (n === 0) { console.error('Hicbir fiyat yok'); process.exit(1); }
+          "
+
+      - name: Değişiklikleri kaydet
+        run: |
+          git config user.name  "veri-botu"
+          git config user.email "actions@github.com"
+          git add data.json
+          if git diff --staged --quiet; then
+            echo "Veri degismemis"
+          else
+            git commit -m "veri: $(date -u '+%Y-%m-%d %H:%M') UTC"
+            git push
+          fi
