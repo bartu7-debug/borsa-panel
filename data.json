@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-08-12T15:27:21.971Z",
+ "guncelleme": "2026-08-12T16:24:42.557Z",
  "kaynak": "doviz.com (Forinvest) · fintables.com",
  "uyari": "BIST verisi 15 dakika gecikmelidir. Yatırım tavsiyesi değildir.",
  "hisseler": {
@@ -150,10 +150,10 @@
    "wk": -2.94,
    "mo": -10.75,
    "yr": -43.32,
-   "fk": "8,80",
-   "pddd": "0,66",
+   "fk": "0,00",
+   "pddd": "0,67",
    "pd": "₺75.950.000.000,00",
-   "dd": "₺115.747.897.000,00",
+   "dd": "₺112.660.264.000,00",
    "vol": "₺1.432.947.558,70",
    "halka": "%46,27"
   }
@@ -1624,10 +1624,10 @@
   ],
   "makro": {
    "bist100": "14.110,14",
-   "dolar": "47,7573",
-   "euro": "55,1539",
-   "gramAltin": "6.790,24",
-   "brent": "88,96"
+   "dolar": "47,7551",
+   "euro": "55,1146",
+   "gramAltin": "6.792,09",
+   "brent": "88,76"
   }
  },
  "tly": {
