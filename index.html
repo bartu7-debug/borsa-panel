@@ -1597,3 +1597,38 @@ try{const st=parseInt(localStorage.getItem("pfT")||"0");if(st>0)go(st,document.q
 </script>
 </body>
 </html>
+
+<script>
+  /* Yama: baslik tarihi data.json'dan gelsin + Yenile butonu */
+  (function(){
+    var eskiHdr=hdrTotal;
+    hdrTotal=function(){
+        eskiHdr();
+        var c=document.querySelector(".tc");
+        if(c&&window.__D&&window.__D.guncelleme){
+              var d=new Date(window.__D.guncelleme);
+              var z=d.toLocaleString(lang==="tr"?"tr-TR":"en-GB",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+              c.innerHTML=c.innerHTML.replace(/son veri 08\.08\.2026 kapanis|son veri 08\.08\.2026 kapanış|last data 08 Aug 2026 close/,(lang==="tr"?"veri: ":"data: ")+z);
+        }
+    };
+    function etiket(){return lang==="tr"?"Yenile":"Refresh"}
+    var b=document.createElement("button");
+    b.id="rfBtn2";b.className="rf-btn";b.textContent=etiket();
+    b.onclick=async function(){
+        if(b.disabled)return;
+        b.disabled=true;b.textContent=lang==="tr"?"Yenileniyor...":"Refreshing...";
+        try{
+              var r=await fetch("data.json?t="+Date.now(),{cache:"no-store"});
+              if(!r.ok)throw new Error("HTTP "+r.status);
+              var D=await r.json();
+              if(veriyiUygula(D)){window.__D=D;render();guncellemeNotu(D);}
+              b.textContent=lang==="tr"?"Guncellendi":"Updated";
+        }catch(e){b.textContent=lang==="tr"?"Hata":"Error";}
+        setTimeout(function(){b.disabled=false;b.textContent=etiket();},1800);
+    };
+    var L=document.querySelector(".lang");
+    if(L&&L.parentNode)L.parentNode.insertBefore(b,L);
+  })();
+</script>
+
+</script>
