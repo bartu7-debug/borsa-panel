@@ -1651,3 +1651,35 @@ try{const st=parseInt(localStorage.getItem("pfT")||"0");if(st>0)go(st,document.q
 </script>
 
 </script>
+
+<script>
+  /* 17.08.2026 - ABD kaldirildi, KPI duzeni degisti, TLY fiyati teraportfoy.com'dan */
+  (function(){
+    var kal=POS_BASE.filter(function(p){return p.mk!=="ABD"});
+    POS_BASE.length=0;Array.prototype.push.apply(POS_BASE,kal);
+    delete SIG["ABOS"];delete SIG["MOND"];
+    var t=POS_BASE.find(function(p){return p.k==="TLY"});
+    if(t){t.px=8611.79299;t.dPct=0.24;t.val=t.qty*t.px;t.dTL=82.50;}
+    TLY.price=8611.79;TLY.dPct=0.24;
+    TLY.fundSize="₺282,3 milyar";TLY.investors="106.539";
+    TLY.ret={wk:2.48,mo:16.65,m6:141.14,ytd:190.38,yr:737.88};
+    kpiTop=function(){
+       var bc=bistCost(),bv=bistVal(),bd=bistDay(),tr=lang==="tr";
+       var tf=POS.find(function(p){return p.k==="TLY"}),bp=bv-bd;
+       var h='<div class="kpi"><div class="l">'+(tr?"BIST hisseleri":"BIST stocks")+'</div><div class="v">₺'+nf(bv)+'</div>'
+        +'<div class="s '+cl(bd)+'">'+(tr?"Günlük":"Today")+': '+(bd>0?"+":"")+'₺'+nf(Math.abs(bd))+' ('+pc(bp?bd/bp*100:0)+')</div>'
+        +'<div class="s2">'+(tr?"Tümü":"Total")+': '+mn(bv-bc,"TRY")+' ('+pc(bc?(bv-bc)/bc*100:0)+')</div></div>';
+       if(tf){var tc=tf.cost?tf.qty*tf.cost:null;
+                h+='<div class="kpi"><div class="l">'+(tr?"TLY fonu":"TLY fund")+'</div><div class="v">₺'+nf(tf.val)+'</div>'
+                 +'<div class="s '+cl(tf.dTL)+'">'+(tr?"Günlük":"Today")+': '+(tf.dTL>0?"+":"")+'₺'+nf(Math.abs(tf.dTL))+' ('+pc(tf.dPct)+')</div>'
+                 +'<div class="s2">'+(tr?"Tümü":"Total")+': '+(tc?mn(tf.val-tc,"TRY")+" ("+pc((tf.val-tc)/tc*100)+")":(tr?"maliyet yok":"no cost"))+'</div></div>';}
+       document.getElementById("kpiTop").innerHTML=h;
+    };
+    var st=document.createElement("style");
+    st.textContent=".kpi .s{font-size:12px;font-weight:650;margin-top:5px;line-height:1.5}.kpi .s2{font-size:10.5px;color:var(--dm);margin-top:4px;border-top:1px solid var(--bd);padding-top:5px;opacity:.75}";
+    document.head.appendChild(st);
+    render();
+  })();
+</script>
+
+</script>
