@@ -1632,3 +1632,22 @@ try{const st=parseInt(localStorage.getItem("pfT")||"0");if(st>0)go(st,document.q
 </script>
 
 </script>
+
+<script>
+  /* Pozisyon guncellemesi - 16.08.2026 araci kurum ekranindan dogrulandi */
+  (function(){
+    var Y={TLY:[4,8403.41],ASELS:[32,315.15],"ALTIN.S1":[161,72.25],THYAO:[35,344.70],FROTO:[115,87.25],PGSUS:[37,153.06],MOND:[1,4.43]};
+    var kalan=POS_BASE.filter(function(p){return Y[p.k]});
+    kalan.forEach(function(p){p.qty=Y[p.k][0];p.cost=Y[p.k][1];});
+    POS_BASE.length=0;
+    Array.prototype.push.apply(POS_BASE,kalan);
+    var s=SIG["ASELS"];
+    if(s&&s.tr&&s.tr.length<6){
+        s.tr.push(["Analist gorusu",1,"8 analist: <b>Al %50 - Tut %50 - Sat %0</b> - hicbir kurum satis demiyor"]);
+        s.en.push(["Analyst view",1,"8 analysts: <b>Buy 50% - Hold 50% - Sell 0%</b> - no house rates it a sell"]);
+    }
+    render();
+  })();
+</script>
+
+</script>
