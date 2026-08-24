@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-08-21T15:55:47.797Z",
+ "guncelleme": "2026-08-24T06:35:24.956Z",
  "kaynak": "doviz.com (Forinvest) · fintables.com",
  "uyari": "BIST verisi 15 dakika gecikmelidir. Yatırım tavsiyesi değildir.",
  "hisseler": {
@@ -160,7 +160,6 @@
  },
  "seriler": {
   "ASELS": {
-   "02-19": 313.25,
    "02-22": 310.5,
    "02-23": 309,
    "02-24": 306.25,
@@ -285,7 +284,6 @@
    "08-20": 403.25
   },
   "ALTIN.S1": {
-   "02-19": 89.3,
    "02-22": 90.17,
    "02-23": 88.2,
    "02-24": 89.25,
@@ -410,7 +408,6 @@
    "08-20": 77.2
   },
   "THYAO": {
-   "02-19": 320.5,
    "02-22": 315.75,
    "02-23": 308.5,
    "02-24": 307,
@@ -535,7 +532,6 @@
    "08-20": 301
   },
   "FROTO": {
-   "02-19": 117.28,
    "02-22": 116.6,
    "02-23": 115.63,
    "02-24": 113.21,
@@ -700,7 +696,6 @@
    "08-20": 26
   },
   "PGSUS": {
-   "02-19": 204.2,
    "02-22": 203.3,
    "02-23": 199.7,
    "02-24": 198.3,
@@ -880,7 +875,7 @@
   ],
   "THYAO": [
    {
-    "t": "THY uçuş ağına 6 yeni rota ekliyor Türk Hava Yolları Genel Müdürü Bilal Ekşi, 2026 yılında uçuş ağına 6 yeni destinasyon ekleyeceklerini açıkladı. Yeni rotalar arasında Erivan, Temeşvar, Monrovia, Bissau, Urumçi ve Çengdu yer alıyor. 7 saat önce",
+    "t": "THY uçuş ağına 6 yeni rota ekliyor Türk Hava Yolları Genel Müdürü Bilal Ekşi, 2026 yılında uçuş ağına 6 yeni destinasyon ekleyeceklerini açıkladı. Yeni rotalar arasında Erivan, Temeşvar, Monrovia, Bissau, Urumçi ve Çengdu yer alıyor. 21 Ağustos 2026 11:32",
     "u": "https://haber.doviz.com/borsa-haberleri/thy-ucus-agina-6-yeni-rota-ekliyor/916989"
    },
    {
@@ -1638,10 +1633,10 @@
   ],
   "makro": {
    "bist100": "14.514,82",
-   "dolar": "48,0641",
-   "euro": "56,2019",
-   "gramAltin": "7.126,27",
-   "brent": "94,31"
+   "dolar": "48,0791",
+   "euro": "56,1888",
+   "gramAltin": "7.193,10",
+   "brent": "90,99"
   }
  },
  "tly": {
