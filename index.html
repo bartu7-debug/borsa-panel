@@ -1683,3 +1683,53 @@ try{const st=parseInt(localStorage.getItem("pfT")||"0");if(st>0)go(st,document.q
 </script>
 
 </script>
+
+<script>
+  /* 31.08.2026 - guncel portfoy: TLY, THF, BIMAS, ASELS, ALTIN.S1 */
+  (function(){
+    var Y={
+       TLY:      {q:4,          c:8403.405,  px:9145.58, d:0.06,  nm:"Tera Portfoy Birinci Serbest Fon", mk:"FON"},
+       THF:      {q:3939.4279,  c:2.73393,   px:2.73393, d:1.81,  nm:"Tera Portfoy Hisse Senedi Fonu",   mk:"FON"},
+       BIMAS:    {q:35,         c:414.192857,px:405.50,  d:-2.41, nm:"BIM Birlesik Magazalar",           mk:"BIST"},
+       ASELS:    {q:32,         c:315.148438,px:386.25,  d:-4.39, nm:"Aselsan",                          mk:"BIST"},
+       "ALTIN.S1":{q:161,       c:72.253727, px:74.48,   d:-3.85, nm:"Darphane Altin Sertifikasi",       mk:"BIST"}
+    };
+    var yeni=[];
+    Object.keys(Y).forEach(function(k){
+        var y=Y[k], p=POS_BASE.find(function(x){return x.k===k});
+        if(!p){p={k:k,nm:{tr:y.nm,en:y.nm},mk:y.mk,cur:"TRY",w:0};}
+        p.qty=y.q;p.cost=y.c;p.px=y.px;p.dPct=y.d;p.mk=y.mk;
+        p.val=y.q*y.px;
+        var prev=y.px/(1+y.d/100); p.dTL=y.q*(y.px-prev);
+        yeni.push(p);
+    });
+    POS_BASE.length=0;Array.prototype.push.apply(POS_BASE,yeni);
+    ["THYAO","FROTO","PGSUS","MASFN","METEN","ABOS","MOND"].forEach(function(k){delete SIG[k];});
+    if(!SIG["THF"])SIG["THF"]={
+       tr:[["Degerleme",0,"fon - F/K, PD/DD uygulanmaz; portfoyunun en az %80'i BIST hisselerinde"],
+                ["Momentum",1,"aylik +%27,85 - haftalik +%6,71"],
+                ["Risk seviyesi",0,"SPK risk degeri 6/7 - TLY'nin 7'sinden bir kademe altta"],
+                ["Vergi",1,"stopaj <b>%0</b> - hisse yogun fon avantaji, TLY'de %17,50"],
+                ["Yogunlasma",-1,"TLY ile ayni yonetim sirketinde (Tera Portfoy) - ikisi birlikte portfoyun ~%55'i"]],
+       en:[["Valuation",0,"a fund - P/E and P/B do not apply; at least 80% in BIST equities"],
+                ["Momentum",1,"+27.85% monthly - +6.71% weekly"],
+                ["Risk level",0,"regulator risk score 6/7 - one notch below TLY"],
+                ["Tax",1,"withholding <b>0%</b> - equity-intensive fund advantage; TLY is 17.50%"],
+                ["Concentration",-1,"same manager as TLY (Tera Portfoy) - together ~55% of the portfolio"]]};
+    if(!SIG["BIMAS"])SIG["BIMAS"]={
+       tr:[["Degerleme",-1,"F/K 19,76 - PD/DD 2,45"],
+                ["Momentum",1,"aylik +%3,07"],
+                ["52h konum",0,"araligin %79'u - zirveye yakin"],
+                ["Is modeli",1,"indirim perakendesi sikismada pazar payi kazanir - tek savunmaci pozisyon"],
+                ["Likidite",1,"fiili dolasim %68,77"]],
+       en:[["Valuation",-1,"P/E 19.76 - P/B 2.45"],
+                ["Momentum",1,"+3.07% monthly"],
+                ["52w position",0,"79% of range - near the high"],
+                ["Business model",1,"discount retail gains share in downturns - the only defensive holding"],
+                ["Liquidity",1,"68.77% free float"]]};
+    TLY.price=9145.58;TLY.dPct=0.06;
+    render();
+  })();
+</script>
+
+</script>
