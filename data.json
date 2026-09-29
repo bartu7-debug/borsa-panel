@@ -1,166 +1,165 @@
 {
- "guncelleme": "2026-09-28T19:45:44.789Z",
+ "guncelleme": "2026-09-29T11:46:30.989Z",
  "kaynak": "doviz.com (Forinvest) · fintables.com",
  "uyari": "BIST verisi 15 dakika gecikmelidir. Yatırım tavsiyesi değildir.",
  "hisseler": {
   "ASELS": {
-   "px": 367.25,
-   "dPct": -1.34,
-   "saat": "18:10",
+   "px": 344.5,
+   "dPct": -6.19,
+   "saat": "14:30",
    "dayR": [
-    357.25,
-    370
+    344.25,
+    367.75
    ],
    "w52": [
     171.28,
     450
    ],
-   "wk": -2.84,
-   "mo": -9.1,
-   "yr": 69.22,
-   "fk": "40,60",
-   "pddd": "5,46",
-   "pd": "₺1.674.660.000.000,00",
+   "wk": -8.01,
+   "mo": -14.73,
+   "yr": 59.47,
+   "fk": "38,09",
+   "pddd": "5,12",
+   "pd": "₺1.570.920.000.000,00",
    "dd": "₺306.744.183.000,00",
-   "vol": "₺9.039.223.966,75",
+   "vol": "₺7.374.350.739,25",
    "halka": "%25,78"
   },
   "ALTIN.S1": {
-   "px": 71.39,
-   "dPct": -2.7,
-   "saat": "15:10",
+   "px": 71.77,
+   "dPct": 0.53,
+   "saat": "11:31",
    "dayR": [
-    71.17,
-    71.73
+    71.43,
+    71.77
    ],
    "w52": [
     62.2,
     116.65
    ],
-   "wk": -4.24,
-   "mo": -7.84,
-   "yr": 15.61,
+   "wk": -3.21,
+   "mo": -7.35,
+   "yr": 13.17,
    "fk": "0,00",
    "pddd": "0,00",
    "pd": "₺0,00",
    "dd": "₺0,00",
-   "vol": "₺1.101.597.605,84",
+   "vol": "₺400.675.962,91",
    "halka": "%0,00"
   },
   "THYAO": {
-   "px": 287,
-   "dPct": -1.29,
-   "saat": "15:10",
+   "px": 291.75,
+   "dPct": 1.66,
+   "saat": "11:31",
    "dayR": [
-    286,
-    293
+    287.5,
+    294.25
    ],
    "w52": [
     258.25,
     355.5
    ],
-   "wk": -2.21,
-   "mo": -6.67,
-   "yr": -10.24,
-   "fk": "3,53",
-   "pddd": "0,39",
-   "pd": "₺396.060.000.000,00",
+   "wk": -2.1,
+   "mo": -5.12,
+   "yr": -8.61,
+   "fk": "3,60",
+   "pddd": "0,40",
+   "pd": "₺403.305.000.000,00",
    "dd": "₺1.018.517.000.000,00",
-   "vol": "₺8.260.876.933,75",
+   "vol": "₺4.492.230.921,25",
    "halka": "%49,17"
   },
   "FROTO": {
-   "px": 74.95,
-   "dPct": -2.41,
-   "saat": "15:10",
+   "px": 74.75,
+   "dPct": -0.27,
+   "saat": "11:31",
    "dayR": [
-    74.25,
-    77.1
+    74.6,
+    75.95
    ],
    "w52": [
     72.05,
     130.91
    ],
-   "wk": -3.73,
-   "mo": -4.4,
-   "yr": -17.96,
-   "fk": "7,92",
-   "pddd": "1,47",
-   "pd": "₺263.007.045.000,00",
+   "wk": -5.62,
+   "mo": -4.66,
+   "yr": -17.11,
+   "fk": "7,90",
+   "pddd": "1,46",
+   "pd": "₺262.129.770.000,00",
    "dd": "₺179.191.213.000,00",
-   "vol": "₺1.316.908.086,15",
-   "halka": "%17,66"
+   "vol": "₺514.228.609,15",
+   "halka": "%17,65"
   },
   "MASFN": {
-   "px": 37.6,
-   "dPct": -1.42,
-   "saat": "15:10",
+   "px": 37.22,
+   "dPct": -1.01,
+   "saat": "11:31",
    "dayR": [
-    36.5,
-    38
+    36.32,
+    37.9
    ],
    "w52": [
     32.42,
     50.2
    ],
-   "wk": 0.05,
-   "mo": -11.32,
+   "wk": -4.56,
+   "mo": -12.22,
    "yr": null,
-   "fk": "8,94",
-   "pddd": "2,00",
-   "pd": "₺20.868.000.000,00",
+   "fk": "8,85",
+   "pddd": "1,98",
+   "pd": "₺20.657.100.000,00",
    "dd": "₺10.433.443.739,00",
-   "vol": "₺130.636.736,04",
-   "halka": "%13,25"
+   "vol": "₺59.830.105,50",
+   "halka": "%13,13"
   },
   "METEN": {
-   "px": 17.5,
-   "dPct": -4.58,
-   "saat": "15:10",
+   "px": 18.14,
+   "dPct": 3.66,
+   "saat": "11:32",
    "dayR": [
-    16.51,
-    18.34
+    17.56,
+    18.26
    ],
    "w52": [
     15.3,
     30.86
    ],
-   "wk": -2.45,
-   "mo": -20.81,
+   "wk": -0.98,
+   "mo": -17.83,
    "yr": null,
-   "fk": "7,66",
-   "pddd": "0,65",
-   "pd": "₺11.112.500.000,00",
+   "fk": "7,95",
+   "pddd": "0,68",
+   "pd": "₺11.531.600.000,00",
    "dd": "₺17.003.641.368,00",
-   "vol": "₺268.806.352,70",
-   "halka": "%17,28"
+   "vol": "₺114.334.616,43",
+   "halka": "%17,01"
   },
   "PGSUS": {
-   "px": 143.7,
-   "dPct": -2.04,
-   "saat": "15:10",
+   "px": 143,
+   "dPct": -0.49,
+   "saat": "11:32",
    "dayR": [
-    141.9,
-    147.1
+    142.9,
+    144.5
    ],
    "w52": [
     140.5,
     227.7
    ],
-   "wk": -4.96,
-   "mo": -4.71,
-   "yr": -34.38,
+   "wk": -5.49,
+   "mo": -5.17,
+   "yr": -33.55,
    "fk": "0,00",
-   "pddd": "0,64",
-   "pd": "₺71.850.000.000,00",
+   "pddd": "0,63",
+   "pd": "₺71.500.000.000,00",
    "dd": "₺112.660.264.000,00",
-   "vol": "₺932.666.293,80",
-   "halka": "%46,25"
+   "vol": "₺588.805.045,20",
+   "halka": "%46,24"
   }
  },
  "seriler": {
   "ASELS": {
-   "03-26": 330.75,
    "03-29": 320.5,
    "03-30": 320.25,
    "03-31": 320.25,
@@ -284,10 +283,10 @@
    "09-22": 381.5,
    "09-23": 367.75,
    "09-24": 372.25,
-   "09-27": 367.25
+   "09-27": 367.25,
+   "09-28": 344
   },
   "ALTIN.S1": {
-   "03-26": 82.68,
    "03-29": 81.87,
    "03-30": 82.26,
    "03-31": 83.25,
@@ -411,10 +410,10 @@
    "09-22": 73.3,
    "09-23": 72.88,
    "09-24": 73.37,
-   "09-27": 71.39
+   "09-27": 71.39,
+   "09-28": 71.77
   },
   "THYAO": {
-   "03-26": 294,
    "03-29": 288.75,
    "03-30": 294.25,
    "03-31": 298,
@@ -538,10 +537,10 @@
    "09-22": 298.5,
    "09-23": 288.5,
    "09-24": 290.75,
-   "09-27": 287
+   "09-27": 287,
+   "09-28": 291.75
   },
   "FROTO": {
-   "03-26": 103.8,
    "03-29": 100,
    "03-30": 101.1,
    "03-31": 102.5,
@@ -665,7 +664,8 @@
    "09-22": 78.5,
    "09-23": 77.4,
    "09-24": 76.8,
-   "09-27": 74.95
+   "09-27": 74.95,
+   "09-28": 74.75
   },
   "MASFN": {
    "07-29": 45.66,
@@ -710,7 +710,8 @@
    "09-22": 38.56,
    "09-23": 38.28,
    "09-24": 38.14,
-   "09-27": 37.6
+   "09-27": 37.6,
+   "09-28": 37.22
   },
   "METEN": {
    "07-27": 22,
@@ -757,10 +758,10 @@
    "09-22": 18.08,
    "09-23": 18.05,
    "09-24": 18.34,
-   "09-27": 17.5
+   "09-27": 17.5,
+   "09-28": 18.14
   },
   "PGSUS": {
-   "03-26": 177,
    "03-29": 174.6,
    "03-30": 175.5,
    "03-31": 179.4,
@@ -884,7 +885,8 @@
    "09-22": 150.3,
    "09-23": 145.7,
    "09-24": 146.7,
-   "09-27": 143.7
+   "09-27": 143.7,
+   "09-28": 143
   }
  },
  "haberler": {
@@ -1024,18 +1026,18 @@
  "adaylar": {
   "TUPRS": {
    "sec": "Rafineri",
-   "px": 398.25,
-   "dPct": -1.91,
+   "px": 391.5,
+   "dPct": -1.69,
    "w52": [
     164.07,
     424.25
    ],
-   "wk": -3.98,
-   "mo": 0.57,
-   "yr": 123.62,
-   "fk": "10,55",
-   "pddd": "1,68",
-   "pd": "₺767.346.346.903,50",
+   "wk": -1.39,
+   "mo": -1.14,
+   "yr": 119.26,
+   "fk": "10,37",
+   "pddd": "1,65",
+   "pd": "₺754.340.476.617,00",
    "halka": "%49,41",
    "haberler": [
     {
@@ -1066,18 +1068,18 @@
   },
   "KCHOL": {
    "sec": "Çeşitlendirilmiş holding",
-   "px": 214,
-   "dPct": -1.15,
+   "px": 215.9,
+   "dPct": 0.89,
    "w52": [
     140.74,
     232.5
    ],
-   "wk": -3.73,
-   "mo": 0,
-   "yr": 28.77,
-   "fk": "14,29",
-   "pddd": "0,68",
-   "pd": "₺542.682.182.700,00",
+   "wk": -2.35,
+   "mo": 0.89,
+   "yr": 30.44,
+   "fk": "14,42",
+   "pddd": "0,69",
+   "pd": "₺547.500.388.995,00",
    "halka": "%26,33",
    "haberler": [
     {
@@ -1108,19 +1110,19 @@
   },
   "MGROS": {
    "sec": "Gıda perakendesi",
-   "px": 532,
-   "dPct": 1.62,
+   "px": 527,
+   "dPct": -0.94,
    "w52": [
     415.39,
     727
    ],
-   "wk": -1.12,
-   "mo": -4.66,
-   "yr": 21.24,
-   "fk": "14,00",
-   "pddd": "1,04",
-   "pd": "₺96.320.851.956,00",
-   "halka": "%49,07",
+   "wk": -2.23,
+   "mo": -5.56,
+   "yr": 21.39,
+   "fk": "13,87",
+   "pddd": "1,03",
+   "pd": "₺95.415.580.791,00",
+   "halka": "%49,06",
    "haberler": [
     {
      "t": "CarrefourSA'nın yeni CEO'su Hatice Evren oldu A101'in çatı şirketi Yeni Mağazacılık, CarrefourSA'nın yüzde 89,28 oranındaki hissesini devralarak organize gıda perakendesi sektöründeki pazar payını yüzde 9,6 seviyesine taşıdı. İmzalanan anlaşma doğrultusunda her iki marka da kendi kurumsal kimlikleri",
@@ -1151,17 +1153,17 @@
   "BIMAS": {
    "sec": "İndirim perakendesi",
    "px": 426.5,
-   "dPct": 0.41,
+   "dPct": null,
    "w52": [
     250.91,
     443.25
    ],
-   "wk": -1.5,
+   "wk": -0.87,
    "mo": 3.27,
-   "yr": 65.46,
-   "fk": "17,33",
+   "yr": 62.68,
+   "fk": "17,32",
    "pddd": "2,54",
-   "pd": "₺511.800.000.000,00",
+   "pd": "₺511.500.000.000,00",
    "halka": "%67,89",
    "haberler": [
     {
@@ -1192,20 +1194,24 @@
   },
   "AKBNK": {
    "sec": "Bankacılık",
-   "px": 70.1,
-   "dPct": -1.13,
+   "px": 70.75,
+   "dPct": 0.93,
    "w52": [
     51.4,
     90.6
    ],
-   "wk": -3.24,
-   "mo": -4.23,
-   "yr": 17.07,
-   "fk": "5,46",
-   "pddd": "1,12",
-   "pd": "₺364.520.000.000,00",
-   "halka": "%53,14",
+   "wk": -3.21,
+   "mo": -3.35,
+   "yr": 19.31,
+   "fk": "5,51",
+   "pddd": "1,13",
+   "pd": "₺367.640.000.000,00",
+   "halka": "%53,07",
    "haberler": [
+    {
+     "t": "Akbank'tan 3 milyar TL'lik tahsili gecikmiş alacak satışı Akbank, 3 milyar TL tutarındaki takipteki kredi alacak portföyünü 488 milyon TL karşılığında dört varlık yönetim şirketine sattı. 2 saat önce",
+     "u": "https://haber.doviz.com/borsa-haberleri/akbank-tan-3-milyar-tl-lik-tahsili-gecikmis-alacak-satisi/933757"
+    },
     {
      "t": "Borsa İstanbul'da 12 hissede özel emir trafiği Borsa İstanbul'da 21-25 eylül işlem haftasında on iki farklı hisse senedinde özel emir yöntemi kullanılarak yüksek hacimli işlemler gerçekleştirildi. Yatırımcıların karşılıklı anlaşmasıyla belirlenen fiyatlar üzerinden yapılan işlemler Akbank, gübre fab",
      "u": "https://haber.doviz.com/borsa-haberleri/borsa-istanbul-da-12-hissede-ozel-emir-trafigi/932952"
@@ -1225,28 +1231,24 @@
     {
      "t": "Goldman Sachs Türk bankalarında hedef düşürdü Goldman Sachs jeopolitik riskler ve enflasyonist baskılar nedeniyle Türk bankalarına yönelik tahminlerini aşağı yönlü revize etti. 20 Mayıs 2026 12:19",
      "u": "https://haber.doviz.com/borsa-haberleri/goldman-sachs-turk-bankalarinda-hedef-dusurdu/873141"
-    },
-    {
-     "t": "Fitch'ten Türk Bankaları için yeni rapor: Riskler sürüyor Türk bankacılık sektöründe operasyonel kârlılığın 2025 yılının son çeyreği itibarıyla belirgin bir iyileşme gösterdiğini raporlayan Fitch Ratings, karların artmasına rağmen risklerin sürdüğünü belirtti. 07 Mayıs 2026 11:26",
-     "u": "https://haber.doviz.com/gundem-haberleri/fitch-ten-turk-bankalari-icin-yeni-rapor-riskler-suruyor/867174"
     }
    ]
   },
   "SAHOL": {
    "sec": "Çeşitlendirilmiş holding",
-   "px": 86.9,
-   "dPct": -1.53,
+   "px": 87.85,
+   "dPct": 1.09,
    "w52": [
     72.73,
     113.18
    ],
-   "wk": -4.03,
-   "mo": -7.21,
-   "yr": 0.28,
-   "fk": "8,79",
+   "wk": -3.62,
+   "mo": -6.19,
+   "yr": 2.66,
+   "fk": "8,88",
    "pddd": "0,44",
-   "pd": "₺182.522.671.721,74",
-   "halka": "%51,15",
+   "pd": "₺184.518.028.892,46",
+   "halka": "%51,14",
    "haberler": [
     {
      "t": "Sabancı duyurdu: Akçansa paylarının satışı tamamlandı Sabancı Holding, Akçansa'daki yüzde 39,72 oranındaki paylarının Heidelberg Materials AG'ye satışını tamamladı. İşlem kapsamında şirket 427,9 milyon dolar satış geliri elde etti. 18 Haziran 2026 10:39",
@@ -1276,19 +1278,19 @@
   },
   "TTKOM": {
    "sec": "Telekomünikasyon",
-   "px": 53.55,
-   "dPct": -2.01,
+   "px": 53.3,
+   "dPct": -0.47,
    "w52": [
     47.48,
     75.65
    ],
-   "wk": 0.28,
-   "mo": 0.09,
-   "yr": 5.1,
-   "fk": "6,13",
-   "pddd": "0,71",
-   "pd": "₺187.425.000.000,00",
-   "halka": "%13,10",
+   "wk": -1.48,
+   "mo": -0.37,
+   "yr": 5.44,
+   "fk": "6,10",
+   "pddd": "0,70",
+   "pd": "₺186.550.000.000,00",
+   "halka": "%13,03",
    "haberler": [
     {
      "t": "Aracı kurumlardan peş peşe hedef fiyat güncellemesi Borsa İstanbul'da işlem gören şirket hisselerine yönelik aracı kurumların hedef fiyat güncellemeleri bugün oldukça yoğun bir tempoda gerçekleşti. Akçansa ve Aygaz hisselerinde yukarı yönlü revizyonlar dikkat çekerken, Türk Telekom ve Logo Yazılım g",
@@ -1318,18 +1320,18 @@
   },
   "EREGL": {
    "sec": "Demir-çelik",
-   "px": 37.48,
-   "dPct": -0.69,
+   "px": 37.4,
+   "dPct": -0.21,
    "w52": [
     23.15,
     45.1
    ],
-   "wk": 0.27,
-   "mo": -4.29,
-   "yr": 25.3,
-   "fk": "34,02",
+   "wk": -1.11,
+   "mo": -4.49,
+   "yr": 29.12,
+   "fk": "33,95",
    "pddd": "0,82",
-   "pd": "₺262.360.000.000,00",
+   "pd": "₺261.800.000.000,00",
    "halka": "%45,71",
    "haberler": [
     {
@@ -1360,20 +1362,24 @@
   },
   "ISCTR": {
    "sec": "Bankacılık",
-   "px": 12.96,
-   "dPct": -0.84,
+   "px": 13,
+   "dPct": 0.31,
    "w52": [
     10.65,
     17.46
    ],
-   "wk": -4.42,
-   "mo": 1.33,
-   "yr": -4.5,
-   "fk": "4,79",
-   "pddd": "0,71",
-   "pd": "₺323.999.611.200,00",
-   "halka": "%29,40",
+   "wk": -3.63,
+   "mo": 1.8,
+   "yr": -3.78,
+   "fk": "4,81",
+   "pddd": "0,72",
+   "pd": "₺325.499.609.400,00",
+   "halka": "%29,35",
    "haberler": [
+    {
+     "t": "Bankacılık sektörünün net kârı 79,9 milyar TL oldu BDDK verilerine göre bankacılık sektörünün ağustos ayı net kârı 79,9 milyar TL'ye yükseldi. Sektörün ocak-ağustos dönemindeki toplam net kârı 676,3 milyar TL olurken, takipteki alacak oranı yüzde 2,92'ye çıktı. 25 dakika önce",
+     "u": "https://haber.doviz.com/gundem-haberleri/bankacilik-sektorunun-net-kari-79-9-milyar-tl-oldu/933848"
+    },
     {
      "t": "Borsa İstanbul'da 12 hissede özel emir trafiği Borsa İstanbul'da 21-25 eylül işlem haftasında on iki farklı hisse senedinde özel emir yöntemi kullanılarak yüksek hacimli işlemler gerçekleştirildi. Yatırımcıların karşılıklı anlaşmasıyla belirlenen fiyatlar üzerinden yapılan işlemler Akbank, gübre fab",
      "u": "https://haber.doviz.com/borsa-haberleri/borsa-istanbul-da-12-hissede-ozel-emir-trafigi/932952"
@@ -1393,10 +1399,6 @@
     {
      "t": "Goldman Sachs Türk bankalarında hedef düşürdü Goldman Sachs jeopolitik riskler ve enflasyonist baskılar nedeniyle Türk bankalarına yönelik tahminlerini aşağı yönlü revize etti. 20 Mayıs 2026 12:19",
      "u": "https://haber.doviz.com/borsa-haberleri/goldman-sachs-turk-bankalarinda-hedef-dusurdu/873141"
-    },
-    {
-     "t": "Türkiye İş Bankası ilk çeyrekte karını yüzde 68 artırdı Türkiye İş Bankası (ISCTR), 2026’nın ilk çeyreğinde net karını geçen yılın aynı dönemine göre yüzde 68 artırarak 20,46 milyar TL’ye yükseltti. Piyasa beklentisi 18,85 milyar TL olan bankanın karı beklentilerin yaklaşık yüzde 8,5 üzerinde gerçek",
-     "u": "https://haber.doviz.com/yerel-ve-sektorel-haberleri/turkiye-is-bankasi-ilk-ceyrekte-karini-yuzde-68-artirdi/866790"
     }
    ]
   }
@@ -1405,305 +1407,305 @@
   "likit": [
    {
     "s": "ASELS",
-    "px": 367.25,
-    "vol": 9039223966.75,
-    "chg": -1.34
+    "px": 344,
+    "vol": 7745543082.75,
+    "chg": -6.33
    },
    {
     "s": "THYAO",
-    "px": 287,
-    "vol": 8260876933.75,
-    "chg": -1.29
-   },
-   {
-    "s": "AKBNK",
-    "px": 70.1,
-    "vol": 8106294117.1,
-    "chg": -1.13
-   },
-   {
-    "s": "TUPRS",
-    "px": 398.25,
-    "vol": 7053728778.25,
-    "chg": -1.91
+    "px": 292,
+    "vol": 4499159480.25,
+    "chg": 1.74
    },
    {
     "s": "SASA",
-    "px": 1.88,
-    "vol": 6472819391.08,
-    "chg": -9.62
+    "px": 1.9,
+    "vol": 4370356657.74,
+    "chg": 1.06
    },
    {
-    "s": "ISCTR",
-    "px": 12.96,
-    "vol": 5932496471.99,
-    "chg": -0.84
+    "s": "AKBNK",
+    "px": 70.7,
+    "vol": 4207044751.6,
+    "chg": 0.86
    },
    {
-    "s": "KCHOL",
-    "px": 214,
-    "vol": 4401330202.5,
-    "chg": -1.15
-   },
-   {
-    "s": "YKBNK",
-    "px": 35.52,
-    "vol": 4203887442.02,
-    "chg": -0.73
+    "s": "TUPRS",
+    "px": 391.5,
+    "vol": 3028935428.25,
+    "chg": -1.69
    },
    {
     "s": "TRALT",
-    "px": 46.66,
-    "vol": 3975727237.26,
-    "chg": -6.38
+    "px": 45.8,
+    "vol": 2715683869.36,
+    "chg": -1.84
    },
    {
-    "s": "GARAN",
-    "px": 129.4,
-    "vol": 3068440119.7,
-    "chg": -0.31
+    "s": "YKBNK",
+    "px": 36.16,
+    "vol": 2518543223.94,
+    "chg": 1.8
    },
    {
-    "s": "EREGL",
-    "px": 37.48,
-    "vol": 3027353434.46,
-    "chg": -0.69
+    "s": "KCHOL",
+    "px": 216,
+    "vol": 2276646675.2,
+    "chg": 0.93
+   },
+   {
+    "s": "ISCTR",
+    "px": 13,
+    "vol": 2257749789.7,
+    "chg": 0.31
+   },
+   {
+    "s": "NETGL",
+    "px": 19.35,
+    "vol": 2111808397.16,
+    "chg": -3.73
    },
    {
     "s": "BIMAS",
-    "px": 426.5,
-    "vol": 2749766984,
-    "chg": 0.41
+    "px": 426,
+    "vol": 1179533901.25,
+    "chg": -0.12
    },
    {
-    "s": "SAHOL",
-    "px": 86.9,
-    "vol": 2453302479.15,
-    "chg": -1.53
+    "s": "GARAN",
+    "px": 129.9,
+    "vol": 1152946104.7,
+    "chg": 0.39
    },
    {
-    "s": "KRDMD",
-    "px": 47.16,
-    "vol": 2408065502.78,
-    "chg": 0.43
+    "s": "EREGL",
+    "px": 37.4,
+    "vol": 1098691239.2,
+    "chg": -0.21
    },
    {
     "s": "MIATK",
-    "px": 24.56,
-    "vol": 2151242552.36,
-    "chg": -9.97
+    "px": 24.44,
+    "vol": 1095935261.9,
+    "chg": -0.49
    },
    {
-    "s": "TCELL",
-    "px": 98.35,
-    "vol": 2123471503.4,
-    "chg": -1.6
+    "s": "SAHOL",
+    "px": 87.85,
+    "vol": 1053769421.7,
+    "chg": 1.09
    },
    {
-    "s": "PETKM",
-    "px": 20.2,
-    "vol": 1899392469.18,
-    "chg": -4.08
+    "s": "CITAS",
+    "px": 119.7,
+    "vol": 906317335.5,
+    "chg": 6.4
    },
    {
-    "s": "EKGYO",
-    "px": 18.92,
-    "vol": 1863920074.7,
-    "chg": -1.71
-   },
-   {
-    "s": "MGROS",
-    "px": 532,
-    "vol": 1653182089,
-    "chg": 1.62
-   },
-   {
-    "s": "TURSG",
-    "px": 5.66,
-    "vol": 1623413762.87,
-    "chg": -3.9
-   },
-   {
-    "s": "SISE",
-    "px": 38.38,
-    "vol": 1520558557,
-    "chg": -2.19
-   },
-   {
-    "s": "HALKB",
-    "px": 45.12,
-    "vol": 1496621570.18,
-    "chg": 0.49
-   },
-   {
-    "s": "TKFEN",
-    "px": 264.75,
-    "vol": 1393345086.75,
-    "chg": -4.59
-   },
-   {
-    "s": "TTKOM",
-    "px": 53.55,
-    "vol": 1317922144.75,
-    "chg": -2.01
-   },
-   {
-    "s": "FROTO",
-    "px": 74.95,
-    "vol": 1316908086.15,
-    "chg": -2.41
-   },
-   {
-    "s": "ENERY",
-    "px": 12.7,
-    "vol": 1298381099.34,
-    "chg": -6
-   },
-   {
-    "s": "EFOR",
-    "px": 14.06,
-    "vol": 1285206416.34,
-    "chg": 1.01
-   },
-   {
-    "s": "EUPWR",
-    "px": 55.35,
-    "vol": 1231684372.3,
-    "chg": -10
-   },
-   {
-    "s": "GUBRF",
-    "px": 442.25,
-    "vol": 1211346428.25,
-    "chg": -3.44
-   },
-   {
-    "s": "VAKBN",
-    "px": 33.82,
-    "vol": 1156004084.2,
-    "chg": 0.06
-   },
-   {
-    "s": "ALTINS1",
-    "px": 71.39,
-    "vol": 1101597605.84,
-    "chg": -2.7
-   },
-   {
-    "s": "KUYAS",
-    "px": 33.1,
-    "vol": 1013413520.7,
+    "s": "CWENE",
+    "px": 20.06,
+    "vol": 886691796.14,
     "chg": -9.96
    },
    {
-    "s": "BRSAN",
-    "px": 649.5,
-    "vol": 960216596,
-    "chg": -3.35
+    "s": "TCELL",
+    "px": 97.7,
+    "vol": 855064655.35,
+    "chg": -0.66
    },
    {
-    "s": "TRMET",
-    "px": 136.8,
-    "vol": 947502713.2,
-    "chg": -2.56
+    "s": "KRDMD",
+    "px": 46.58,
+    "vol": 853694116.16,
+    "chg": -1.23
+   },
+   {
+    "s": "TKFEN",
+    "px": 249.4,
+    "vol": 844613708.7,
+    "chg": -5.8
+   },
+   {
+    "s": "EKGYO",
+    "px": 18.85,
+    "vol": 775518435.68,
+    "chg": -0.37
+   },
+   {
+    "s": "PETKM",
+    "px": 19.77,
+    "vol": 680674027.52,
+    "chg": -2.13
+   },
+   {
+    "s": "MGROS",
+    "px": 527.5,
+    "vol": 680441406.5,
+    "chg": -0.85
    },
    {
     "s": "PGSUS",
-    "px": 143.7,
-    "vol": 932666293.8,
-    "chg": -2.04
+    "px": 143.1,
+    "vol": 589371754.3,
+    "chg": -0.42
    },
    {
-    "s": "KRDMB",
-    "px": 73,
-    "vol": 820608048.55,
-    "chg": -7.42
+    "s": "SISE",
+    "px": 38.44,
+    "vol": 541535757.78,
+    "chg": 0.16
    },
    {
-    "s": "AKSEN",
-    "px": 71.6,
-    "vol": 729983194.2,
-    "chg": -0.56
+    "s": "TRMET",
+    "px": 131.1,
+    "vol": 532529136.3,
+    "chg": -4.17
    },
    {
-    "s": "GESAN",
-    "px": 43.48,
-    "vol": 709386614.26,
-    "chg": -6.53
+    "s": "EUPWR",
+    "px": 55.45,
+    "vol": 528451299,
+    "chg": 0.18
+   },
+   {
+    "s": "FROTO",
+    "px": 74.75,
+    "vol": 518057078.4,
+    "chg": -0.27
+   },
+   {
+    "s": "VAKBN",
+    "px": 33.78,
+    "vol": 515457176.58,
+    "chg": -0.12
+   },
+   {
+    "s": "GUBRF",
+    "px": 426,
+    "vol": 497939948,
+    "chg": -3.67
+   },
+   {
+    "s": "SARAE",
+    "px": 37.86,
+    "vol": 489805749.88,
+    "chg": -6.56
+   },
+   {
+    "s": "TTKOM",
+    "px": 53.3,
+    "vol": 472761725.55,
+    "chg": -0.47
+   },
+   {
+    "s": "ODAS",
+    "px": 6.03,
+    "vol": 435903610.62,
+    "chg": -8.77
+   },
+   {
+    "s": "BRSAN",
+    "px": 644,
+    "vol": 417836222.5,
+    "chg": -0.85
+   },
+   {
+    "s": "BTCIM",
+    "px": 2.01,
+    "vol": 417106995.64,
+    "chg": -2.9
+   },
+   {
+    "s": "ENERY",
+    "px": 13.1,
+    "vol": 411013488.86,
+    "chg": 3.15
+   },
+   {
+    "s": "ALTINS1",
+    "px": 71.83,
+    "vol": 409832230.92,
+    "chg": 0.62
+   },
+   {
+    "s": "HALKB",
+    "px": 45.18,
+    "vol": 371869637.18,
+    "chg": 0.13
    },
    {
     "s": "TOASO",
-    "px": 278.75,
-    "vol": 676065486.75,
-    "chg": -3.88
+    "px": 279.5,
+    "vol": 371086309.25,
+    "chg": 0.27
    },
    {
-    "s": "ENKAI",
-    "px": 85.4,
-    "vol": 658620067.05,
-    "chg": -1.21
+    "s": "AKSEN",
+    "px": 69.85,
+    "vol": 368290579.55,
+    "chg": -2.44
    }
   ],
   "kazandiran": [
    {
-    "s": "CITAS",
-    "px": 112.5,
-    "chg": 9.97
+    "s": "EUYO",
+    "px": 3.85,
+    "chg": 10
    },
    {
-    "s": "ETILR",
-    "px": 7.4,
-    "chg": 9.96
-   },
-   {
-    "s": "ETYAT",
-    "px": 11.06,
+    "s": "TKNKA",
+    "px": 66.9,
     "chg": 9.94
    },
    {
-    "s": "BULGS",
-    "px": 15.05,
-    "chg": 9.93
+    "s": "MARMR",
+    "px": 1.58,
+    "chg": 9.72
    },
    {
     "s": "VRGYO",
-    "px": 1.38,
-    "chg": 9.52
+    "px": 1.51,
+    "chg": 9.42
+   },
+   {
+    "s": "BRMEN",
+    "px": 7.3,
+    "chg": 6.73
    }
   ],
   "kaybettiren": [
    {
-    "s": "TRHOL",
-    "px": 1746,
-    "chg": -10
-   },
-   {
     "s": "IZFAS",
-    "px": 19.8,
+    "px": 17.82,
     "chg": -10
    },
    {
-    "s": "RALYH",
-    "px": 105.3,
+    "s": "BIGTK",
+    "px": 107.1,
     "chg": -10
    },
    {
-    "s": "INTEK",
-    "px": 177.3,
+    "s": "MAGEN",
+    "px": 13.05,
     "chg": -10
    },
    {
-    "s": "SELEC",
-    "px": 113.4,
+    "s": "HEDEF",
+    "px": 9.27,
+    "chg": -10
+   },
+   {
+    "s": "USAK",
+    "px": 0.54,
     "chg": -10
    }
   ],
   "makro": {
-   "bist100": "12.592,76",
-   "dolar": "48,9788",
-   "euro": "55,7202",
-   "gramAltin": "6.499,29",
-   "brent": "98,07"
+   "bist100": "12.403,29",
+   "dolar": "49,0003",
+   "euro": "55,6464",
+   "gramAltin": "6.540,07",
+   "brent": "97,05"
   }
  },
  "tly": {
